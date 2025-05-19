@@ -6,9 +6,9 @@
 - [Why Choose Godot Easy Inject?](#why-choose-godot-easy-inject)
 - [Installation and Activation](#installation-and-activation)
 - [Usage](#usage)
-  - [CreateNode - Automatic Node Creation](#createnode--automatic-node-creation)
-  - [GameObjectBean - Game Object Registration](#gameobjectbean--game-object-registration)
-  - [Component - Regular Class Objects](#component--regular-class-objects)
+  - [CreateNode-Automatic Node Creation](#createnode--automatic-node-creation)
+  - [GameObjectBean-Game Object Registration](#gameobjectbean--game-object-registration)
+  - [Component-Regular Class Objects](#component--regular-class-objects)
   - [Dependency Injection](#dependency-injection)
   - [Bean Naming](#bean-naming)
   - [Cross-Scene Persistence](#cross-scene-persistence)
@@ -86,7 +86,7 @@ To verify that the plugin is working properly, you can create a simple test scri
 
 ## Usage
 
-### CreateNode - Automatic Node Creation
+### CreateNode-Automatic Node Creation
 
 The `CreateNode` attribute allows the container to automatically create node instances and register them as Beans.
 
@@ -100,7 +100,7 @@ The `CreateNode` attribute allows the container to automatically create node ins
         }
     }
 
-### GameObjectBean - Game Object Registration
+### GameObjectBean-Game Object Registration
 
 The `GameObjectBean` attribute is used to register existing nodes in the scene as Beans.
 
@@ -117,7 +117,7 @@ The `GameObjectBean` attribute is used to register existing nodes in the scene a
         }
     }
 
-### Component - Regular Class Objects
+### Component-Regular Class Objects
 
 The `Component` attribute is used to register regular C# classes (non-`Node`) as Beans.
 
