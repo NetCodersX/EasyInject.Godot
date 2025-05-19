@@ -88,7 +88,7 @@ Godot Easy Inject 是一个为 Godot 游戏引擎开发的依赖注入插件，�
 
 ### CreateNode 节点自动创建
 
-CreateNode 特性允许容器自动创建节点实例并注册为 Bean。
+`CreateNode` 特性允许容器自动创建节点实例并注册为 Bean。
 
     // 自动创建节点并注册为Bean
     [CreateNode]
@@ -102,7 +102,7 @@ CreateNode 特性允许容器自动创建节点实例并注册为 Bean。
 
 ### GameObjectBean 游戏对象注册
 
-`GameObjectBean `特性用于将场景中已存在的节点注册为`Bean。
+`GameObjectBean `特性用于将场景中已存在的节点注册为 Bean。
 
     // 将节点注册为Bean
     [GameObjectBean]
