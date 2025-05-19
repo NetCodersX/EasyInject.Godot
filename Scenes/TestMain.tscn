@@ -1,0 +1,30 @@
+[gd_scene load_steps=4 format=3 uid="uid://c5b8mlkh05xjh"]
+
+[ext_resource type="Script" uid="uid://b4pwkwscffmit" path="res://Scenes/TestMain.cs" id="1_wk3vb"]
+[ext_resource type="Script" uid="uid://8wfg1tvr6kui" path="res://Scenes/TextLabel.cs" id="2_tpw25"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_wk3vb"]
+font_size = 30
+
+[node name="TestMain" type="Node2D"]
+script = ExtResource("1_wk3vb")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Label" type="Label" parent="CanvasLayer"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -106.5
+offset_top = -11.5
+offset_right = 106.5
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "test scenes"
+label_settings = SubResource("LabelSettings_wk3vb")
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("2_tpw25")

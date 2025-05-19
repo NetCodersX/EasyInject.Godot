@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>EventBus API文档</title>
+	<style>
+		:root {
+			--primary-color: #3498db;
+			--secondary-color: #2c3e50;
+			--background-color: #f9f9f9;
+			--text-color: #333;
+			--border-color: #ddd;
+			--code-background: #f5f5f5;
+			--method-background: #f8f9fa;
+			--table-header-bg: #eee;
+			--link-color: #2980b9;
+			--link-hover-color: #1a5a89;
+			--header-color: #2c3e50;
+			--keyword-color: #0000ff;
+			--comment-color: #008000;
+			--string-color: #a31515;
+			--number-color: #098658;
+			--sidebar-width: 280px;
+		}
+
+		<blade media|%20(prefers-color-scheme%3A%20dark)%20%7B%0D> :root {
+			--primary-color: #61afef;
+			--secondary-color: #282c34;
+			--background-color: #21252b;
+			--text-color: #ddd;
+			--border-color: #454545;
+			--code-background: #282c34;
+			--method-background: #2e333d;
+			--table-header-bg: #2c313a;
+			--link-color: #61afef;
+			--link-hover-color: #8ac7ff;
+			--header-color: #e5e5e5;
+			--keyword-color: #c678dd;
+			--comment-color: #98c379;
+			--string-color: #e5c07b;
+			--number-color: #d19a66;
+		}
+		}
+
+		* {
+			box-sizing: border-box;
+			margin: 0;
+			padding: 0;
+		}
+
+		body {
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			line-height: 1.6;
+			color: var(--text-color);
+			background-color: var(--background-color);
+			padding-bottom: 50px;
+			overflow-x: hidden;
+		}
+
+		/* 侧边栏样式 */
+		.sidebar {
+			position: fixed;
+			width: var(--sidebar-width);
+			height: 100%;
+			background-color: var(--method-background);
+			overflow-y: auto;
+			z-index: 100;
+			padding: 20px;
+			border-right: 1px solid var(--border-color);
+			transition: transform 0.3s ease;
+		}
+
+		/* 主内容区域 */
+		.main-content {
+			margin-left: var(--sidebar-width);
+			width: calc(100% - var(--sidebar-width));
+			transition: margin-left 0.3s ease;
+		}
+
+		.container {
+			max-width: 1000px;
+			margin: 0 auto;
+			padding: 20px;
+		}
+
+		header {
+			text-align: center;
+			margin-bottom: 30px;
+			padding: 20px 0;
+			border-bottom: 1px solid var(--border-color);
+		}
+
+		h1 {
+			color: var(--header-color);
+			font-size: 36px;
+			margin-bottom: 10px;
+		}
+
+		h2 {
+			color: var(--header-color);
+			font-size: 28px;
+			margin: 25px 0 15px;
+			padding-bottom: 8px;
+			border-bottom: 1px solid var(--border-color);
+		}
+
+		h3 {
+			color: var(--header-color);
+			font-size: 24px;
+			margin: 20px 0 10px;
+		}
+
+		h4 {
+			color: var(--header-color);
+			font-size: 20px;
+			margin: 15px 0 10px;
+		}
+
+		h5 {
+			color: var(--header-color);
+			font-size: 18px;
+			margin: 10px 0 5px;
+		}
+
+		h6 {
+			color: var(--header-color);
+			font-size: 16px;
+			margin: 8px 0 4px;
+		}
+
+		p {
+			margin-bottom: 15px;
+		}
+
+		a {
+			color: var(--link-color);
+			text-decoration: none;
+			transition: color 0.3s;
+		}
+
+		a:hover {
+			color: var(--link-hover-color);
+			text-decoration: underline;
+		}
+
+		ul,
+		ol {
+			margin: 0 0 15px 20px;
+		}
+
+		li {
+			margin-bottom: 5px;
+		}
+
+		.code-block {
+			margin: 15px 0;
+			background-color: var(--code-background);
+			border-radius: 4px;
+			overflow: auto;
+		}
+
+		pre {
+			padding: 15px;
+			overflow-x: auto;
+		}
+
+		code {
+			font-family: 'Consolas', 'Courier New', monospace;
+			font-size: 14px;
+			line-height: 1.5;
+		}
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			margin: 15px 0;
+		}
+
+		table,
+		th,
+		td {
+			border: 1px solid var(--border-color);
+		}
+
+		th,
+		td {
+			padding: 10px;
+			text-align: left;
+		}
+
+		th {
+			background-color: var(--table-header-bg);
+			font-weight: bold;
+		}
+
+		tr:nth-child(even) {
+			background-color: rgba(0, 0, 0, 0.03);
+		}
+
+		.method-block,
+		.property-block,
+		.event-block {
+			background-color: var(--method-background);
+			border-radius: 4px;
+			padding: 15px;
+			margin-bottom: 20px;
+			border-left: 3px solid var(--primary-color);
+		}
+
+		.param-table,
+		.properties-table,
+		.events-table,
+		.enum-table,
+		.info-table {
+			font-size: 14px;
+		}
+
+		.parameters,
+		.return-info {
+			margin-top: 15px;
+			font-size: 14px;
+		}
+
+		.type-info {
+			margin: 20px 0;
+			background-color: var(--method-background);
+			border-radius: 4px;
+			padding: 15px;
+		}
+
+		.interface-members,
+		.delegate-parameters {
+			margin: 15px 0;
+		}
+
+		.toc h2 {
+			margin-top: 0;
+			border-bottom: none;
+			padding-bottom: 10px;
+		}
+
+		.toc ul {
+			list-style-type: none;
+		}
+
+		.toc ul ul {
+			margin-left: 20px;
+		}
+
+		.toc li {
+			margin-bottom: 5px;
+		}
+
+		/* 目录切换按钮 */
+		#toggle-sidebar {
+			display: none;
+			position: fixed;
+			bottom: 20px;
+			right: 20px;
+			z-index: 1000;
+			background-color: var(--primary-color);
+			color: white;
+			border: none;
+			border-radius: 50%;
+			width: 60px;
+			height: 60px;
+			font-size: 16px;
+			cursor: pointer;
+			box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+		}
+
+		/* 响应式布局 */
+		<blade media|%20(max-width%3A%20768px)%20%7B%0D>.sidebar {
+			transform: translateX(-100%);
+			width: 80%;
+		}
+
+		.sidebar.show {
+			transform: translateX(0);
+		}
+
+		.main-content {
+			margin-left: 0;
+			width: 100%;
+		}
+
+		#toggle-sidebar {
+			display: block;
+		}
+		}
+
+		/* 代码高亮 */
+		.keyword {
+			color: var(--keyword-color);
+			font-weight: bold;
+		}
+
+		.comment {
+			color: var(--comment-color);
+		}
+
+		.string {
+			color: var(--string-color);
+		}
+
+		.number {
+			color: var(--number-color);
+		}
+	</style>
+</head>
+
+<body>
+	<div class="sidebar">
+		<div class="toc">
+			<h2>目录</h2>
+			<ul>
+				<li><a href="#overview">概述</a></li>
+				<li><a href="#interfaces">接口</a></li>
+				<li><a href="#enums">枚举</a></li>
+				<li><a href="#properties">属性</a></li>
+				<li><a href="#methods">方法</a>
+					<ul>
+						<li><a href="#subscription">订阅方法</a></li>
+						<li><a href="#publishing">发布方法</a></li>
+						<li><a href="#history">历史记录方法</a></li>
+						<li><a href="#analysis">分析方法</a></li>
+						<li><a href="#utility">工具方法</a></li>
+					</ul>
+				</li>
+				<li><a href="#events">事件</a></li>
+				<li><a href="#examples">使用示例</a></li>
+			</ul>
+		</div>
+	</div>
+
+	<div class="main-content">
+		<div class="container">
+			<header>
+				<h1>EventBus API文档</h1>
+			</header>
+
+			<section id="overview">
+				<h2>概述</h2>
+				<p>EventBus 是一个强类型事件总线系统，用于在Godot游戏中实现解耦合的组件通信。它提供了订阅、发布、过滤和历史记录等功能，支持基于优先级的事件处理。</p>
+
+				<div class="type-info">
+					<h3>类型信息</h3>
+					<table class="info-table">
+						<tbody>
+							<tr>
+								<td>命名空间</td>
+								<td>全局命名空间</td>
+							</tr>
+							<tr>
+								<td>程序集</td>
+								<td>Assembly-CSharp</td>
+							</tr>
+							<tr>
+								<td>基类</td>
+								<td>Godot.Node</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+
+				<div class="code-block">
+					<pre><code class="code-example">
+public class EventBus : Node
+{
+    // 成员和方法...
+}
+                    </code></pre>
+				</div>
+			</section>
+
+			<section id="interfaces">
+				<h2>接口</h2>
+
+				<h3>IEvent</h3>
+				<p>所有事件必须实现的标记接口。</p>
+
+				<div class="interface-members">
+					<h4>成员</h4>
+					<ul>
+						<li>无成员 - 这是一个标记接口</li>
+					</ul>
+				</div>
+
+				<div class="code-block">
+					<pre><code class="code-example">
+public interface IEvent
+{
+}
+                    </code></pre>
+				</div>
+			</section>
+
+			<section id="enums">
+				<h2>枚举</h2>
+
+				<h3>Priority</h3>
+				<p>定义事件处理的优先级。较高优先级的订阅者会先于较低优先级的订阅者接收到事件。</p>
+
+				<table class="enum-table">
+					<thead>
+						<tr>
+							<th>值</th>
+							<th>名称</th>
+							<th>描述</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>0</td>
+							<td>High</td>
+							<td>高优先级 - 最先处理</td>
+						</tr>
+						<tr>
+							<td>1</td>
+							<td>Normal</td>
+							<td>普通优先级 - 默认</td>
+						</tr>
+						<tr>
+							<td>2</td>
+							<td>Low</td>
+							<td>低优先级 - 最后处理</td>
+						</tr>
+					</tbody>
+				</table>
+
+				<div class="code-block">
+					<pre><code class="code-example">
+public enum Priority
+{
+    High = 0,
+    Normal = 1,
+    Low = 2
+}
+                    </code></pre>
+				</div>
+			</section>
+
+			<section id="properties">
+				<h2>属性</h2>
+
+				<table class="properties-table">
+					<thead>
+						<tr>
+							<th>属性</th>
+							<th>类型</th>
+							<th>描述</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>DebugMode</td>
+							<td>bool</td>
+							<td>当设置为 true 时，EventBus 会打印详细的调试信息。 [get, set]</td>
+						</tr>
+						<tr>
+							<td>EnableHistory</td>
+							<td>bool</td>
+							<td>当设置为 true 时，EventBus 会保留事件历史记录。 [get, set]</td>
+						</tr>
+						<tr>
+							<td>MaxHistoryEntries</td>
+							<td>int</td>
+							<td>历史记录中保留的最大事件数量。 [get, set]</td>
+						</tr>
+					</tbody>
+				</table>
+
+				<h3>属性使用示例</h3>
+				<div class="code-block">
+					<pre><code class="code-example">
+// 获取事件总线实例
+EventBus eventBus = GetNode<EventBus>("/root/EventBus");
+
+// 启用调试模式
+eventBus.DebugMode = true;
+
+// 启用事件历史记录
+eventBus.EnableHistory = true;
+
+// 设置历史记录大小
+eventBus.MaxHistoryEntries = 200;
+                    </code></pre>
+				</div>
+			</section>
+
+			<section id="events">
+				<h2>事件</h2>
+
+				<table class="events-table">
+					<thead>
+						<tr>
+							<th>事件</th>
+							<th>类型</th>
+							<th>描述</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>EventPublished</td>
+							<td>EventPublishedCallback</td>
+							<td>当有事件被发布时触发。</td>
+						</tr>
+						<tr>
+							<td>EventHandled</td>
+							<td>EventHandledCallback</td>
+							<td>当事件被处理后触发，包括处理时间信息。</td>
+						</tr>
+					</tbody>
+				</table>
+
+				<h3>事件使用示例</h3>
+				<div class="code-block">
+					<pre><code class="code-example">
+// 获取事件总线实例
+EventBus eventBus = GetNode<EventBus>("/root/EventBus");
+
+// 订阅事件发布回调
+eventBus.EventPublished += OnEventPublished;
+
+// 订阅事件处理回调
+eventBus.EventHandled += OnEventHandled;
+
+// 事件处理方法
+private void OnEventPublished(Type eventType, EventBus.IEvent eventData)
+{
+    GD.Print($"事件已发布: {eventType.Name}");
+}
+
+// 事件处理时间回调
+private void OnEventHandled(Type eventType, EventBus.IEvent eventData, double processingTimeMs)
+{
+    GD.Print($"事件已处理: {eventType.Name}, 处理时间: {processingTimeMs}ms");
+}
+                    </code></pre>
+				</div>
+			</section>
+
+			<section id="methods">
+				<h2>方法</h2>
+
+				<h3 id="subscription">订阅方法</h3>
+
+				<div class="method-block">
+					<h4>void Subscribe<T>(EventCallback<T> callback, Priority priority = Priority.Normal, bool oneTime =
+								false, Func<T, bool> filter = null) where T : IEvent</h4>
+					<p>订阅指定类型的事件。</p>
+
+					<table class="param-table">
+						<thead>
+							<tr>
+								<th>参数</th>
+								<th>类型</th>
+								<th>描述</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>callback</td>
+								<td>EventCallback<T>
+								</td>
+								<td>当事件发布时要调用的回调函数。</td>
+							</tr>
+							<tr>
+								<td>priority</td>
+								<td>Priority</td>
+								<td>事件处理的优先级。默认为 Normal。</td>
+							</tr>
+							<tr>
+								<td>oneTime</td>
+								<td>bool</td>
+								<td>如果为 true，订阅将在处理一次事件后自动取消。</td>
+							</tr>
+							<tr>
+								<td>filter</td>
+								<td>Func<T, bool>
+								</td>
+								<td>可选的过滤器函数，用于筛选感兴趣的事件。</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+
+				<div class="method-block">
+					<h4>void SubscribeOnce<T>(EventCallback<T> callback, Priority priority = Priority.Normal, Func<T,
+									bool> filter = null) where T : IEvent</h4>
+					<p>订阅指定类型的事件，在处理一次后自动取消订阅。</p>
+
+					<table class="param-table">
+						<thead>
+							<tr>
+								<th>参数</th>
+								<th>类型</th>
+								<th>描述</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>callback</td>
+								<td>EventCallback<T>
+								</td>
+								<td>当事件发布时要调用的回调函数。</td>
+							</tr>
+							<tr>
+								<td>priority</td>
+								<td>Priority</td>
+								<td>事件处理的优先级。默认为 Normal。</td>
+							</tr>
+							<tr>
+								<td>filter</td>
+								<td>Func<T, bool>
+								</td>
+								<td>可选的过滤器函数，用于筛选感兴趣的事件。</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+
+				<div class="method-block">
+					<h4>void Unsubscribe<T>(EventCallback<T> callback) where T : IEvent</h4>
+					<p>取消订阅指定类型的事件。</p>
+
+					<table class="param-table">
+						<thead>
+							<tr>
+								<th>参数</th>
+								<th>类型</th>
+								<th>描述</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>callback</td>
+								<td>EventCallback<T>
+								</td>
+								<td>要取消的回调函数。</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+
+				<h3 id="publishing">发布方法</h3>
+
+				<div class="method-block">
+					<h4>void Publish<T>(T eventData) where T : IEvent</h4>
+					<p>发布指定类型的事件。</p>
+
+					<table class="param-table">
+						<thead>
+							<tr>
+								<th>参数</th>
+								<th>类型</th>
+								<th>描述</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>eventData</td>
+								<td>T</td>
+								<td>要发布的事件数据。</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+
+				<h3 id="history">历史记录方法</h3>
+
+				<div class="method-block">
+					<h4>List<HistoryEntry> GetEventHistory()</h4>
+					<p>获取所有已发布事件的历史记录。</p>
+
+					<div class="return-info">
+						<strong>返回值:</strong>
+						<p>包含所有已发布事件的历史记录列表。</p>
+					</div>
+				</div>
+
+				<div class="method-block">
+					<h4>List<HistoryEntry> GetEventHistory<T>() where T : IEvent</h4>
+					<p>获取指定类型事件的历史记录。</p>
+
+					<div class="return-info">
+						<strong>返回值:</strong>
+						<p>包含指定类型已发布事件的历史记录列表。</p>
+					</div>
+				</div>
+
+				<div class="method-block">
+					<h4>void ClearEventHistory()</h4>
+					<p>清除所有事件历史记录。</p>
+				</div>
+
+				<h3 id="analysis">分析方法</h3>
+
+				<div class="method-block">
+					<h4>Dictionary<Type, int> GetSubscriptionCounts()</h4>
+					<p>获取每种事件类型的订阅者数量。</p>
+
+					<div class="return-info">
+						<strong>返回值:</strong>
+						<p>每种事件类型的订阅者数量字典。</p>
+					</div>
+				</div>
+
+				<div class="method-block">
+					<h4>List<SlowHandlerInfo> GetSlowEventHandlers(double thresholdMs = 5.0)</h4>
+					<p>获取处理时间超过阈值的慢速事件处理器。</p>
+
+					<table class="param-table">
+						<thead>
+							<tr>
+								<th>参数</th>
+								<th>类型</th>
+								<th>描述</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>thresholdMs</td>
+								<td>double</td>
+								<td>处理时间阈值，单位为毫秒。默认为 5.0ms。</td>
+							</tr>
+						</tbody>
+					</table>
+
+					<div class="return-info">
+						<strong>返回值:</strong>
+						<p>处理时间超过阈值的事件处理器信息列表。</p>
+					</div>
+				</div>
+
+				<div class="method-block">
+					<h4>List<EventFrequencyInfo> GetMostFrequentEvents(int topCount = 10)</h4>
+					<p>获取发布频率最高的事件类型。</p>
+
+					<table class="param-table">
+						<thead>
+							<tr>
+								<th>参数</th>
+								<th>类型</th>
+								<th>描述</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>topCount</td>
+								<td>int</td>
+								<td>要返回的最频繁事件数量。默认为 10。</td>
+							</tr>
+						</tbody>
+					</table>
+
+					<div class="return-info">
+						<strong>返回值:</strong>
+						<p>发布频率最高的事件类型信息列表。</p>
+					</div>
+				</div>
+
+				<div class="method-block">
+					<h4>List<Type> GetOrphanedEventTypes()</h4>
+					<p>获取已发布但没有订阅者的事件类型。</p>
+
+					<div class="return-info">
+						<strong>返回值:</strong>
+						<p>已发布但没有订阅者的事件类型列表。</p>
+					</div>
+				</div>
+
+				<h3 id="utility">工具方法</h3>
+
+				<div class="method-block">
+					<h4>void Clear()</h4>
+					<p>清除所有订阅、过滤器和历史记录。</p>
+				</div>
+
+				<div class="method-block">
+					<h4>EventSequence CreateEventSequence()</h4>
+					<p>创建一个事件序列，用于顺序发布多个事件。</p>
+
+					<div class="return-info">
+						<strong>返回值:</strong>
+						<p>新创建的事件序列对象。</p>
+					</div>
+				</div>
+			</section>
+
+			<section id="examples">
+				<h2>使用示例</h2>
+
+				<h3>基本用法</h3>
+				<div class="code-block">
+					<pre><code class="code-example">
+// 定义事件
+public struct PlayerMovedEvent : EventBus.IEvent
+{
+    public Vector3 Position { get; }
+    
+    public PlayerMovedEvent(Vector3 position)
+    {
+        Position = position;
+    }
+}
+
+// 获取事件总线实例
+EventBus eventBus = GetNode<EventBus>("/root/EventBus");
+
+// 订阅事件
+eventBus.Subscribe<PlayerMovedEvent>(OnPlayerMoved);
+
+// 事件处理方法
+private void OnPlayerMoved(PlayerMovedEvent evt)
+{
+    // 处理玩家移动事件
+    Console.WriteLine($"玩家移动到: {evt.Position}");
+}
+
+// 发布事件
+eventBus.Publish(new PlayerMovedEvent(new Vector3(10, 0, 5)));
+                    </code></pre>
+				</div>
+
+				<h3>高级示例</h3>
+				<div class="code-block">
+					<pre><code class="code-example">
+// 高级 Subscribe 方法用法示例
+EventBus eventBus = new EventBus();
+
+// 准备参数 callback
+var callbackParam = new EventBus.EventCallback<ItemCollectedEvent>((evt) => {
+    // 只处理稀有物品
+    if (evt.ItemId.StartsWith("rare_")) {
+        Console.WriteLine($"收集到稀有物品: {evt.ItemId}, 数量: {evt.Quantity}");
+    }
+});
+
+// 准备参数 priority
+var priorityParam = EventBus.Priority.High;
+
+// 准备参数 oneTime
+var oneTimeParam = true;
+
+// 准备参数 filter
+var filterParam = new Func<ItemCollectedEvent, bool>(evt => 
+    evt.Quantity > 1 && evt.ItemId.Contains("gem")
+);
+
+// 调用 Subscribe 方法
+eventBus.Subscribe<ItemCollectedEvent>(callbackParam, priorityParam, oneTimeParam, filterParam);
+
+// 发布一个事件测试
+eventBus.Publish(new ItemCollectedEvent("rare_gem_diamond", 3));
+                    </code></pre>
+				</div>
+
+				<h3>完整集成示例</h3>
+				<div class="code-block">
+					<pre><code class="code-example">
+using System;
+using Godot;
+
+public partial class ExampleClass : Node
+{
+    private EventBus _eventBus;
+    
+    public override void _Ready()
+    {
+        // 初始化 EventBus
+        _eventBus = GetNode<EventBus>("/root/EventBus");
+        
+        // 设置属性
+        _eventBus.DebugMode = true;
+        
+        // 订阅事件
+        _eventBus.Subscribe<PlayerMovedEvent>(OnPlayerMoved);
+        _eventBus.Subscribe<ItemCollectedEvent>(OnItemCollected, EventBus.Priority.High);
+        _eventBus.SubscribeOnce<GameStateChangedEvent>(OnGameStarted, 
+            filter: evt => evt.NewState == GameState.Playing);
+        
+        // 调用方法
+        _eventBus.Publish(new GameStateChangedEvent(GameState.Playing, GameState.MainMenu));
+    }
+    
+    public override void _Process(double delta)
+    {
+        // 在游戏循环中使用 EventBus
+    }
+    
+    // PlayerMovedEvent 事件处理方法
+    private void OnPlayerMoved(PlayerMovedEvent evt)
+    {
+        GD.Print("玩家移动事件被触发");
+        
+        // 处理事件...
+    }
+    
+    // ItemCollectedEvent 事件处理方法
+    private void OnItemCollected(ItemCollectedEvent evt)
+    {
+        GD.Print("物品收集事件被触发");
+        
+        // 处理事件...
+    }
+    
+    // GameStateChangedEvent 事件处理方法（一次性）
+    private void OnGameStarted(GameStateChangedEvent evt)
+    {
+        GD.Print("游戏已开始");
+        
+        // 这个处理器只会被调用一次
+    }
+    
+    public override void _ExitTree()
+    {
+        // 清理资源
+        _eventBus.Unsubscribe<PlayerMovedEvent>(OnPlayerMoved);
+        _eventBus.Unsubscribe<ItemCollectedEvent>(OnItemCollected);
+        // 不需要取消订阅 OnGameStarted，因为它是一次性订阅
+    }
+}
+                    </code></pre>
+				</div>
+			</section>
+		</div>
+	</div>
+
+	<script>
+		// 移动端目录切换
+		document.addEventListener('DOMContentLoaded', function () {
+			// 添加目录切换按钮
+			var sidebar = document.querySelector('.sidebar');
+			var mainContent = document.querySelector('.main-content');
+
+			var toggleButton = document.createElement('button');
+			toggleButton.id = 'toggle-sidebar';
+			toggleButton.textContent = '菜单';
+			document.body.appendChild(toggleButton);
+
+			toggleButton.addEventListener('click', function () {
+				sidebar.classList.toggle('show');
+				if (sidebar.classList.contains('show')) {
+					toggleButton.textContent = '关闭';
+				} else {
+					toggleButton.textContent = '菜单';
+				}
+			});
+
+			// 点击链接后自动关闭目录（在移动设备上）
+			var links = sidebar.querySelectorAll('a');
+			links.forEach(function (link) {
+				link.addEventListener('click', function () {
+					if (window.innerWidth <= 768) {
+						sidebar.classList.remove('show');
+						toggleButton.textContent = '菜单';
+					}
+				});
+			});
+
+			// 为code-example类添加自定义处理（避免被通用代码高亮处理）
+			document.querySelectorAll('code.code-example').forEach(function (block) {
+					// 手动处理代码高亮，排除掉关键字，字符串等被错误替换的问题
+					var html = block.innerHTML;
+
+					// 存储所有注释，以免干扰其他替换
+					var comments = [];
+					html = html.replace(/(\\/\\ / .*) / g,
+						function (match) {
+							comments.push(match);
+							return '###COMMENT' + (comments.length - 1) + '###';
+						});
+
+				// 存储所有字符串，以免干扰其他替换
+				var strings = []; html = html.replace(/\"(.*?)\"/g, function (match) {
+					strings.push(match);
+					return '###STRING' + (strings.length - 1) + '###';
+				});
+
+				// 高亮关键字
+				var keywords = ['public', 'private', 'protected', 'static', 'readonly', 'virtual', 'override',
+					'abstract', 'class', 'interface', 'struct', 'enum', 'void', 'bool', 'int', 'float',
+					'double', 'string', 'var', 'new', 'return', 'if', 'else', 'for', 'foreach', 'while',
+					'switch', 'case', 'break', 'continue', 'using', 'namespace', 'get', 'set', 'where',
+					'this', 'null', 'true', 'false'
+				];
+
+				keywords.forEach(function (keyword) {
+					var regex = new RegExp('\\\\b(' + keyword + ')\\\\b', 'g');
+					html = html.replace(regex, '<span class="keyword">$1</span>');
+				});
+
+				// 高亮数字
+				html = html.replace(/\\b(\\d+)\\b/g, '<span class="number">$1</span>');
+
+				// 还原字符串并高亮
+				html = html.replace(/###STRING(\\d+)###/g, function (match, index) {
+					return '<span class="string">' + strings[parseInt(index)] + '</span>';
+				});
+
+				// 还原注释并高亮
+				html = html.replace(/###COMMENT(\\d+)###/g, function (match, index) {
+					return '<span class="comment">' + comments[parseInt(index)] + '</span>';
+				});
+
+				block.innerHTML = html;
+			});
+		});
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,37 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="EasyInject.Godot"
+run/main_scene="uid://c5b8mlkh05xjh"
+config/features=PackedStringArray("4.5", "C#")
+
+[display]
+
+window/size/window_width_override=1920
+window/size/window_height_override=1080
+
+[dotnet]
+
+project/assembly_name="EasyInject.Godot"
+
+[editor]
+
+naming/scene_name_casing=1
+naming/script_name_casing=1
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/core_system/plugin.cfg")
+
+[godots]
+
+version_hint=""
