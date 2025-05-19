@@ -1,5 +1,7 @@
 # Godot Easy Inject
 
+[中文](README)|[English](README_en)
+
 ## 目录
 
 - [介绍](#介绍)
