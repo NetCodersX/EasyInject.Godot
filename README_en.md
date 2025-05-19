@@ -1,10 +1,10 @@
 # Godot Easy Inject
 
-## 目录
+## Table of contents
 
-- [介绍](#介绍)
-- [为什么选择 Godot Easy Inject?](#为什么选择-godot-easy-inject)
-- [安装与启用](#安装与启用)
+- [introduce](#introduce)
+- [Why choose Godot Easy Inject?](#Why choose Godot Easy Inject?)
+- [Install and enable](#Install and enable)
 - [使用方法](#使用方法)
   - [CreateNode 节点自动创建](#createnode-节点自动创建)
   - [GameObjectBean 游戏对象注册](#gameobjectbean-游戏对象注册)
@@ -16,318 +16,318 @@
 - [基于里氏替换原则的继承与接口](#基于里氏替换原则的继承与接口)
 - [联系方式](#联系方式)
 
-## 介绍
+## introduce
 
-Godot Easy Inject 是一个为 Godot 游戏引擎开发的依赖注入插件，帮助开发者更好地管理游戏组件间的依赖关系，使代码更加模块化、可测试和易于维护。
+Godot Easy Inject is a dependency injection plug-in developed for Godot game engine, helping developers better manage dependencies between game components, making the code more modular, testable and easy to maintain.
 
-## 为什么选择 Godot Easy Inject?
+## Why choose Godot Easy Inject?
 
-在传统 Godot 开发中，获取节点引用通常需要使用 ``GetNode<T>(path)`` 或导出变量并在编辑器中手动拖拽。例如：
+In traditional Godot development, getting node references usually requires using ``GetNode<T>(path)`` or export the variable and drag it manually in the editor. For example:
 
-    // 传统方式获取节点引用
-    public class Player : Node3D
+// Traditional way to get node references
+public class Player: Node3D
     {
-        // 需要在编辑器中手动拖拽或使用路径查找
-        [Export]
-        private InventorySystem inventory;
+// You need to manually drag and drop in the editor or use path search
+[Export]
+private InventorySystem inventory;
         
-        private GameStateManager gameState;
+private GameStateManager gameState;
         
-        public override void _Ready()
+public override void _Ready()
         {
-            // 硬编码路径获取节点
-            gameState = GetNode<GameStateManager>("/root/GameStateManager");
+// Hard-coded path to obtain node
+gameState = GetNode<GameStateManager>("/root/GameStateManager");
         }
     }
 
-这种方式在大型项目中会导致代码耦合度高、路径变更容易出错，且测试困难。
-而使用 Godot Easy Inject，你只需添加几个特性标记，就能实现自动依赖注入：
+This method will lead to high code coupling, path changes are prone to errors, and difficult to test in large projects.
+With Godot Easy Inject, you only need to add a few feature markers to achieve automatic dependency injection:
 
-    [GameObjectBean]
-    public class Player : Node3D
+[GameObjectBean]
+public class Player: Node3D
     {
-        [Autowired]
-        private InventorySystem inventory;
+[Autowired]
+private InventorySystem inventory;
         
-        [Autowired]
-        private GameStateManager gameState;
+[Autowired]
+private GameStateManager gameState;
         
-        public override void _Ready()
+public override void _Ready()
         {
-            // 依赖已注入，直接使用
+// Dependency has been injected, use directly
         }
     }
 
-是否已经等不及想要尝试了呢？现在就开始吧！
+Can't wait to try it? Let’s start now!
 
-## 安装与启用
+## Install and enable
 
-### 安装插件
+### Install plug-ins
 
-从 GitHub 下载插件
+Download the plugin from GitHub
 
-在 GitHub 仓库界面点击绿色的 Code 按钮，选择 Download ZIP，下载源码。
+Click the green Code button in the GitHub repository interface, select Download ZIP, and download the source code.
 
-解压后将整个 EasyInject 文件夹复制到您的 Godot 项目的 addons 目录中。如果没有 addons 目录，请在项目根目录创建一个。
+After unzipping, copy the entire EasyInject folder to the addons directory of your Godot project. If there is no addons directory, create one in the project root directory.
 
-### 启用插件
+### Enable plug-ins
 
-在 Godot 编辑器中启用插件
+Enable plug-ins in Godot Editor
 
-打开 Godot 编辑器，进入项目设置（Project → Project Settings）。
+Open Godot Editor and go to Project Settings (Project → Project Settings).
 
-选择 "插件" 选项卡（Plugins），找到 "core_system" 插件，将其状态改为 "启用"（Enable）。
+Select the Plugins tab (Plugins), locate the "core_system" plugin, and change its status to "Enable".
 
-#### 验证插件是否正常工作
+#### Verify that the plugin works properly
 
-插件启用后，只有在运行场景时才会自动初始化 IoC 容器。
+When the plug-in is enabled, the IoC container will be automatically initialized only when the scenario is running.
 
-要验证插件是否正常工作，您可以创建一个简单的测试脚本并运行场景。
+To verify that the plugin is working properly, you can create a simple test script and run the scenario.
 
-## 使用方法
+## How to use
 
-### CreateNode 节点自动创建
+### CreateNode node automatically creates
 
-`CreateNode` 特性允许容器自动创建节点实例并注册为 Bean。
+`CreateNode`Features allow containers to automatically create node instances and register as beans.
 
-    // 自动创建节点并注册为Bean
-    [CreateNode]
-    public class DebugOverlay : Control
+// Automatically create nodes and register as beans
+[CreateNode]
+public class DebugOverlay : Control
     {
-        public override void _Ready()
+public override void _Ready()
         {
-            // 节点创建逻辑
+// Node creation logic
         }
     }
 
-### GameObjectBean 游戏对象注册
+### GameObjectBean GameObject Registration
 
-`GameObjectBean `特性用于将场景中已存在的节点注册为 Bean。
+`GameObjectBean `Features are used to register existing nodes in the scene as beans.
 
-    // 将节点注册为Bean
-    [GameObjectBean]
-    public class Player : CharacterBody3D
+// Register node as bean
+[GameObjectBean]
+public class Player: CharacterBody3D
     {
-        [Autowired]
-        private GameManager gameManager;
+[Autowired]
+private GameManager gameManager;
     
-        public override void _Ready()
+public override void _Ready()
         {
-            // gameManager已注入，可直接使用
+// gameManager has been injected and can be used directly
         }
     }
 
-### Component 普通类对象
+### Component Normal class object
 
-`Component` 特性用于注册普通 C# 类（非 `Node`）为 Bean。
+`Component`Features are used to register ordinary C# classes (non-`Node`) is a bean.
 
-    // 注册普通类为Bean
-    [Component]
-    public class GameManager
+// Register the normal class as Bean
+[Component]
+public class GameManager
     {
-        public void StartGame()
+public void StartGame()
         {
-            GD.Print("Game started!");
+GD.Print("Game started!");
         }
     }
     
-    // 使用自定义名称
-    [Component("MainScoreService")]
-    public class ScoreService
+// Use a custom name
+[Component("MainScoreService")]
+public class ScoreService
     {
-        public int Score { get; private set; }
+public int Score { get; private set; }
         
-        public void AddScore(int points)
+public void AddScore(int points)
         {
-            Score += points;
-            GD.Print($"Score: {Score}");
+Score += points;
+GD.Print($"Score: {Score}");
         }
     }
     
-### 依赖注入
+### Dependency injection
 
-`Autowired` 特性用于标记需要注入的依赖。
+`Autowired`Features are used to mark dependencies that need to be injected.
 
-    // 字段注入
-    [GameObjectBean]
-    public class UIController : Control
+// Field injection
+[GameObjectBean]
+public class UIController : Control
     {
-        // 基本注入
-        [Autowired]
-        private GameManager gameManager;
+// Basic injection
+[Autowired]
+private GameManager gameManager;
         
-        // 属性注入
-        [Autowired]
-        public ScoreService ScoreService { get; set; }
+// Attribute injection
+[Autowired]
+public ScoreService ScoreService { get; set; }
         
-        // 带名称的注入
-        [Autowired("MainScoreService")]
-        private ScoreService mainScoreService;
+// Injection with name
+[Autowired("MainScoreService")]
+private ScoreService mainScoreService;
         
-        public override void _Ready()
+public override void _Ready()
         {
-            gameManager.StartGame();
-            mainScoreService.AddScore(100);
+gameManager.StartGame();
+mainScoreService.AddScore(100);
         }
     }
     
-    // 构造函数注入 (仅适用于普通类，不适用于Node)
-    [Component]
-    public class GameLogic
+// Constructor injection (only for ordinary classes, not for Node)
+[Component]
+public class GameLogic
     {
-        private readonly GameManager gameManager;
-        private readonly ScoreService scoreService;
+private readonly GameManager gameManager;
+private readonly ScoreService scoreService;
         
-        // 构造函数注入
-        public GameLogic(GameManager gameManager, [Autowired("MainScoreService")] ScoreService scoreService)
+// Constructor injection
+public GameLogic(GameManager gameManager, [Autowired("MainScoreService")] ScoreService scoreService)
         {
-            this.gameManager = gameManager;
-            this.scoreService = scoreService;
-        }
-        
-        public void ProcessGameLogic()
-        {
-            gameManager.StartGame();
-            scoreService.AddScore(50);
-        }
-    }
-    
-### Bean的命名
-
-Bean 可以通过多种方式命名：
-
-    // 默认使用类名
-    [GameObjectBean]
-    public class Player : Node3D { }
-    
-    // 自定义名称
-    [GameObjectBean("MainPlayer")]
-    public class Player : Node3D { }
-    
-    // 使用节点名称
-    [GameObjectBean(ENameType.GameObjectName)]
-    public class Enemy : Node3D { }
-    
-    // 使用字段值
-    [GameObjectBean(ENameType.FieldValue)]
-    public class ItemSpawner : Node3D
-    {
-        [BeanName]
-        public string SpawnerID = "Level1Spawner";
-    }
-    
-`ENameType` 枚举提供了以下选项：
-
-- `Custom`：自定义名称，默认值
-- `ClassName`：使用类名作为 Bean 名称
-- `GameObjectName`：使用节点名称作为 Bean 名称
-- `FieldValue`：使用标记了 BeanName 的字段值作为 Bean 名称
-
-### 跨场景持久化
-
-`PersistAcrossScenes` 特性用于标记在场景切换时不应被销毁的 Bean。
-
-    // 持久化的游戏管理器
-    [PersistAcrossScenes]
-    [Component]
-    public class GameProgress
-    {
-        public int Level { get; set; }
-        public int Score { get; set; }
-    }
-    
-    // 持久化的音频管理器
-    [PersistAcrossScenes]
-    [GameObjectBean]
-    public class AudioManager : Node
-    {
-        public override void _Ready()
-        {
-            // 确保不随场景销毁
-            GetTree().Root.CallDeferred("add_child", this);
+this.gameManager = gameManager;
+this.scoreService = scoreService;
         }
         
-        public void PlaySFX(string sfxPath)
+public void ProcessGameLogic()
         {
-            // 播放音效逻辑
+gameManager.StartGame();
+scoreService.AddScore(50);
         }
     }
     
-### 使用容器 API
+### Naming of Bean
 
-容器提供了以下主要方法，用于手动管理 Bean：
+Beans can be named in a number of ways:
 
-    // 获取IoC实例
-    var ioc = GetNode("/root/CoreSystem").GetIoC();
+// Use class name by default
+[GameObjectBean]
+public class Player : Node3D { }
     
-    // 获取Bean
-    var player = ioc.GetBean<Player>();
-    var namedPlayer = ioc.GetBean<Player>("MainPlayer");
+// Custom name
+[GameObjectBean("MainPlayer")]
+public class Player : Node3D { }
     
-    // 创建节点Bean
-    var enemy = ioc.CreateNodeAsBean<Enemy>(enemyResource, "Boss", spawnPoint.Position, Quaternion.Identity);
+// Use node name
+[GameObjectBean(ENameType.GameObjectName)]
+public class Enemy : Node3D { }
     
-    // 删除节点Bean
-    ioc.DeleteNodeBean<Enemy>(enemy, "Boss", true);
-    
-    // 清空Bean
-    ioc.ClearBeans(); // 清空当前场景的Bean
-    ioc.ClearBeans("MainLevel"); // 清空指定场景的Bean
-    ioc.ClearBeans(true); // 清空所有Bean，包括持久化Bean
-
-## 基于里氏替换原则的继承与接口
-
-容器支持通过接口或基类实现松耦合依赖注入：
-
-    // 定义接口
-    public interface IWeapon
+// Use field values
+[GameObjectBean(ENameType.FieldValue)]
+public class ItemSpawner: Node3D
     {
-        void Attack();
+[BeanName]
+public string SpawnerID = "Level1Spawner";
     }
     
-    // 实现接口的Bean
-    [GameObjectBean("Sword")]
-    public class Sword : Node3D, IWeapon
+`ENameType`The enumeration provides the following options:
+
+- `Custom`: Custom name, default value
+- `ClassName`: Use the class name as the bean name
+- `GameObjectName`: Use the node name as the bean name
+- `FieldValue`: Use the field value marked with BeanName as the Bean name
+
+### Cross-scene persistence
+
+`PersistAcrossScenes`Features are used to mark beans that should not be destroyed during scene switching.
+
+// Persistent game manager
+[PersistAcrossScenes]
+[Component]
+public class GameProgress
     {
-        public void Attack()
-        {
-            GD.Print("Sword attack!");
-        }
+public int Level { get; set; }
+public int Score { get; set; }
     }
     
-    // 另一个实现
-    [GameObjectBean("Bow")]
-    public class Bow : Node3D, IWeapon
+// Persistent audio manager
+[PersistAcrossScenes]
+[GameObjectBean]
+public class AudioManager: Node
     {
-        public void Attack()
+public override void _Ready()
         {
-            GD.Print("Bow attack!");
-        }
-    }
-    
-    // 通过接口注入
-    [GameObjectBean]
-    public class Player : CharacterBody3D
-    {
-        [Autowired("Sword")]
-        private IWeapon meleeWeapon;
-        
-        [Autowired("Bow")]
-        private IWeapon rangedWeapon;
-        
-        public void AttackWithMelee()
-        {
-            meleeWeapon.Attack();
+// Make sure not to be destroyed with the scene
+GetTree().Root.CallDeferred("add_child", this);
         }
         
-        public void AttackWithRanged()
+public void PlaySFX(string sfxPath)
         {
-            rangedWeapon.Attack();
+// Play sound effect logic
+        }
+    }
+    
+### Using the Container API
+
+Containers provide the following main methods for manually managing beans:
+
+// Get IoC instance
+var ioc = GetNode("/root/CoreSystem").GetIoC();
+    
+// Get Bean
+var player = ioc.GetBean<Player>();
+var namedPlayer = ioc.GetBean<Player>("MainPlayer");
+    
+// Create a node bean
+var enemy = ioc.CreateNodeAsBean<Enemy>(enemyResource, "Boss", spawnPoint.Position, Quaternion.Identity);
+    
+// Delete node beans
+ioc.DeleteNodeBean<Enemy>(enemy, "Boss", true);
+    
+// Clear Bean
+ioc.ClearBeans(); // Clear the Beans in the current scene
+ioc.ClearBeans("MainLevel"); // Clear the beans in the specified scene
+ioc.ClearBeans(true); // Clear all beans, including persistent beans
+
+## Inheritance and Interface Based on the Reich replacement principle
+
+Containers support loosely coupled dependency injection through interfaces or base classes:
+
+// Define the interface
+public interface IWeapon
+    {
+void Attack();
+    }
+    
+// Implement the interface bean
+[GameObjectBean("Sword")]
+public class Sword : Node3D, IWeapon
+    {
+public void Attack()
+        {
+GD.Print("Sword attack!");
+        }
+    }
+    
+// Another implementation
+[GameObjectBean("Bow")]
+public class Bow : Node3D, IWeapon
+    {
+public void Attack()
+        {
+GD.Print("Bow attack!");
+        }
+    }
+    
+// Inject through interface
+[GameObjectBean]
+public class Player: CharacterBody3D
+    {
+[Autowired("Sword")]
+private IWeapon meleeWeapon;
+        
+[Autowired("Bow")]
+private IWeapon rangedWeapon;
+        
+public void AttackWithMelee()
+        {
+meleeWeapon.Attack();
+        }
+        
+public void AttackWithRanged()
+        {
+rangedWeapon.Attack();
         }
     }
 
-当多个类实现同一接口时，需要使用名称区分它们。
+When multiple classes implement the same interface, they need to be distinguished by names.
 
-## 联系方式
+## Contact information
 
-如有任何问题、建议或贡献，请通过 GitHub Issues 提交反馈。
+If you have any questions, suggestions or contributions, please submit feedback through GitHub Issues.
