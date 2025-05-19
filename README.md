@@ -76,7 +76,7 @@ Godot Easy Inject 是一个为 Godot 游戏引擎开发的依赖注入插件，�
 
 打开 Godot 编辑器，进入项目设置（Project → Project Settings）。
 
-选择 "插件" 选项卡（Plugins），找到 "EasyInject" 插件，将其状态改为 "启用"（Enable）。
+选择 "插件" 选项卡（Plugins），找到 "core_system" 插件，将其状态改为 "启用"（Enable）。
 
 #### 验证插件是否正常工作
 
