@@ -91,24 +91,12 @@ Godot Easy Inject 是一个为 Godot 游戏引擎开发的依赖注入插件，�
 CreateNode 特性允许容器自动创建节点实例并注册为 Bean。
 
     // 自动创建节点并注册为Bean
-    [CreateNode(AddToScene = true)]
+    [CreateNode]
     public class DebugOverlay : Control
     {
         public override void _Ready()
         {
             // 节点创建逻辑
-        }
-    }
-    
-    // 使用工厂方法创建节点
-    public class NodeFactory
-    {
-        [CreateNode(Name = "BGMPlayer")]
-        public static AudioStreamPlayer CreateAudio()
-        {
-            var player = new AudioStreamPlayer();
-            player.Stream = ResourceLoader.Load<AudioStream>("res://audio/music.ogg");
-            return player;
         }
     }
 
