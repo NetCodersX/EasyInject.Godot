@@ -7,7 +7,7 @@
 - [Installation and Activation](#installation-and-activation)
 - [Usage](#usage)
   - [CreateNode Automatic Node Creation](#createnode-automatic-node-creation)
-  - [GameObjectNode Game Object Registration](#gameobjectnode-game-object-registration)
+  - [GameObjectService Game Object Registration](#gameobjectservice-game-object-registration)
   - [Component Regular Class Objects](#component-regular-class-objects)
   - [Dependency Injection](#dependency-injection)
   - [Node Naming](#node-naming)
@@ -43,7 +43,7 @@ In traditional Godot development, obtaining node references usually requires usi
 This approach can lead to high code coupling, easy errors due to path changes, and difficulty in testing in large projects.
 With Godot Easy Inject, you only need to add a few attribute markers to achieve automatic dependency injection:
 
-    [GameObjectNode]
+    [GameObjectService]
     public class Player : Node3D
     {
         [Autowired]
@@ -100,12 +100,12 @@ The `CreateNode` attribute allows the container to automatically create node ins
         }
     }
 
-### GameObjectNode Game Object Registration
+### GameObjectService Game Object Registration
 
-The `GameObjectNode` attribute is used to register existing nodes in the scene as Nodes.
+The `GameObjectService` attribute is used to register existing nodes in the scene as Nodes.
 
     // Register the node as a Node
-    [GameObjectNode]
+    [GameObjectService]
     public class Player : CharacterBody3D
     {
         [Autowired]
@@ -149,7 +149,7 @@ The `Component` attribute is used to register regular C# classes (non-`Node`) as
 The `Autowired` attribute is used to mark dependencies that need to be injected.
 
     // Field injection
-    [GameObjectNode]
+    [GameObjectService]
     public class UIController : Control
     {
         // Basic injection
@@ -197,19 +197,19 @@ The `Autowired` attribute is used to mark dependencies that need to be injected.
 Nodes can be named in several ways:
 
     // Use the class name by default
-    [GameObjectNode]
+    [GameObjectService]
     public class Player : Node3D { }
 
     // Custom name
-    [GameObjectNode("MainPlayer")]
+    [GameObjectService("MainPlayer")]
     public class Player : Node3D { }
 
     // Use the node name
-    [GameObjectNode(ENameType.GameObjectName)]
+    [GameObjectService(ENameType.GameObjectName)]
     public class Enemy : Node3D { }
 
     // Use the field value
-    [GameObjectNode(ENameType.FieldValue)]
+    [GameObjectService(ENameType.FieldValue)]
     public class ItemSpawner : Node3D
     {
         [NodeName]
@@ -238,7 +238,7 @@ The `PersistAcrossScenes` attribute is used to mark Nodes that should not be des
 
     // Persistent audio manager
     [PersistAcrossScenes]
-    [GameObjectNode]
+    [GameObjectService]
     public class AudioManager : Node
     {
         public override void _Ready()
@@ -286,7 +286,7 @@ The container supports loosely coupled dependency injection through interfaces o
     }
 
     // Node implementing the interface
-    [GameObjectNode("Sword")]
+    [GameObjectService("Sword")]
     public class Sword : Node3D, IWeapon
     {
         public void Attack()
@@ -296,7 +296,7 @@ The container supports loosely coupled dependency injection through interfaces o
     }
 
     // Another implementation
-    [GameObjectNode("Bow")]
+    [GameObjectService("Bow")]
     public class Bow : Node3D, IWeapon
     {
         public void Attack()
@@ -306,7 +306,7 @@ The container supports loosely coupled dependency injection through interfaces o
     }
 
     // Inject through the interface
-    [GameObjectNode]
+    [GameObjectService]
     public class Player : CharacterBody3D
     {
         [Autowired("Sword")]

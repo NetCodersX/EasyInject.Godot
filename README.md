@@ -9,7 +9,7 @@
 - [安装与启用](#安装与启用)
 - [使用方法](#使用方法)
   - [CreateNode 节点自动创建](#createnode-节点自动创建)
-  - [GameObjectNode 游戏对象注册](#gameobjectnode-游戏对象注册)
+  - [GameObjectService 游戏对象注册](#gameobjectservice-游戏对象注册)
   - [Component 普通类对象](#component-普通类对象)
   - [依赖注入](#依赖注入)
   - [Node 的命名](#node的命名)
@@ -45,7 +45,7 @@ Godot Easy Inject 是一个为 Godot 游戏引擎开发的依赖注入插件，�
 这种方式在大型项目中会导致代码耦合度高、路径变更容易出错，且测试困难。
 而使用 Godot Easy Inject，你只需添加几个特性标记，就能实现自动依赖注入：
 
-    [GameObjectNode]
+    [GameObjectService]
     public class Player : Node3D
     {
         [Autowired]
@@ -102,12 +102,12 @@ Godot Easy Inject 是一个为 Godot 游戏引擎开发的依赖注入插件，�
         }
     }
 
-### GameObjectNode 游戏对象注册
+### GameObjectService 游戏对象注册
 
-`GameObjectNode `特性用于将场景中已存在的节点注册为 Node。
+`GameObjectService `特性用于将场景中已存在的节点注册为 Node。
 
     // 将节点注册为Node
-    [GameObjectNode]
+    [GameObjectService]
     public class Player : CharacterBody3D
     {
         [Autowired]
@@ -151,7 +151,7 @@ Godot Easy Inject 是一个为 Godot 游戏引擎开发的依赖注入插件，�
 `Autowired` 特性用于标记需要注入的依赖。
 
     // 字段注入
-    [GameObjectNode]
+    [GameObjectService]
     public class UIController : Control
     {
         // 基本注入
@@ -199,19 +199,19 @@ Godot Easy Inject 是一个为 Godot 游戏引擎开发的依赖注入插件，�
 Node 可以通过多种方式命名：
 
     // 默认使用类名
-    [GameObjectNode]
+    [GameObjectService]
     public class Player : Node3D { }
 
     // 自定义名称
-    [GameObjectNode("MainPlayer")]
+    [GameObjectService("MainPlayer")]
     public class Player : Node3D { }
 
     // 使用节点名称
-    [GameObjectNode(ENameType.GameObjectName)]
+    [GameObjectService(ENameType.GameObjectName)]
     public class Enemy : Node3D { }
 
     // 使用字段值
-    [GameObjectNode(ENameType.FieldValue)]
+    [GameObjectService(ENameType.FieldValue)]
     public class ItemSpawner : Node3D
     {
         [NodeName]
@@ -240,7 +240,7 @@ Node 可以通过多种方式命名：
 
     // 持久化的音频管理器
     [PersistAcrossScenes]
-    [GameObjectNode]
+    [GameObjectService]
     public class AudioManager : Node
     {
         public override void _Ready()
@@ -288,7 +288,7 @@ Node 可以通过多种方式命名：
     }
 
     // 实现接口的Node
-    [GameObjectNode("Sword")]
+    [GameObjectService("Sword")]
     public class Sword : Node3D, IWeapon
     {
         public void Attack()
@@ -298,7 +298,7 @@ Node 可以通过多种方式命名：
     }
 
     // 另一个实现
-    [GameObjectNode("Bow")]
+    [GameObjectService("Bow")]
     public class Bow : Node3D, IWeapon
     {
         public void Attack()
@@ -308,7 +308,7 @@ Node 可以通过多种方式命名：
     }
 
     // 通过接口注入
-    [GameObjectNode]
+    [GameObjectService]
     public class Player : CharacterBody3D
     {
         [Autowired("Sword")]
