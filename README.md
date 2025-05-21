@@ -150,11 +150,11 @@ Godot Easy Inject 是一个为 Godot 游戏引擎开发的依赖注入插件，�
 
 `Autowired` 特性用于标记需要注入的依赖。
 
-    // 字段注入
+    // 服务注入
     [GameObjectService]
     public class UIController : Control
     {
-        // 基本注入
+        // 字段注入
         [Autowired]
         private GameManager gameManager;
 
