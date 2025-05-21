@@ -2,7 +2,7 @@ using EasyInject.Attributes;
 using Godot;
 using System;
 
-[GameObjectBean]
+[GameObjectService]
 public partial class TestMain : Node2D
 {
 	[Autowired]

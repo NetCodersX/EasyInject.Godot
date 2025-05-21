@@ -4,11 +4,11 @@ using EasyInject.Attributes;
 namespace EasyInject.Behaviours
 {
 	/// <summary>
-	/// 跨场景 Bean 节点。
+	/// 跨场景 Node 节点。
 	/// 自动标记 [PersistAcrossScenes]，并在 _Ready 阶段保证自己不会被场景卸载。
 	/// </summary>
 	[PersistAcrossScenes]
-	public partial class AcrossScenesBeanObject : BeanObject
+	public partial class AcrossScenesNodeObject : NodeObject
 	{
 		public override void _Ready()
 		{

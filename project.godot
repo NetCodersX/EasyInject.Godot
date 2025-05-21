@@ -14,6 +14,10 @@ config/name="EasyInject.Godot"
 run/main_scene="uid://c5b8mlkh05xjh"
 config/features=PackedStringArray("4.5", "C#")
 
+[autoload]
+
+CoreSystem="*res://addons/core_system/Module/EasyInject/Controllers/GlobalInitializer.cs"
+
 [display]
 
 window/size/window_width_override=1920

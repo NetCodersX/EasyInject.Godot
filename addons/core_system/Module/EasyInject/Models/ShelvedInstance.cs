@@ -1,26 +1,26 @@
 namespace EasyInject.Models
 {
 	/// <summary>
-	/// 用于记录还未完成依赖注入的 Bean 实例及其名称。
+	/// 用于记录还未完成依赖注入的 Node 实例及其名称。
 	/// </summary>
 	public class ShelvedInstance
 	{
 		/// <summary>
-		/// Bean 实例对象
+		/// Node 实例对象
 		/// </summary>
 		public readonly object Instance;
 		/// <summary>
-		/// Bean 名称
+		/// Node 名称
 		/// </summary>
-		public readonly string BeanName;
+		public readonly string NodeName;
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="beanName"></param>
+		/// <param name="nodeName"></param>
 		/// <param name="instance"></param>
-		public ShelvedInstance(string beanName, object instance)
+		public ShelvedInstance(string nodeName, object instance)
 		{
-			BeanName = beanName;
+			NodeName = nodeName;
 			Instance = instance;
 		}
 
@@ -31,7 +31,7 @@ namespace EasyInject.Models
 		{
 			if (obj is ShelvedInstance shelvedInstance)
 			{
-				return Instance == shelvedInstance.Instance && BeanName == shelvedInstance.BeanName;
+				return Instance == shelvedInstance.Instance && NodeName == shelvedInstance.NodeName;
 			}
 			return false;
 		}
@@ -41,7 +41,7 @@ namespace EasyInject.Models
 		/// <returns></returns>
 		public override int GetHashCode()
 		{
-			return Instance.GetHashCode() ^ BeanName.GetHashCode();
+			return Instance.GetHashCode() ^ NodeName.GetHashCode();
 		}
 	}
 }

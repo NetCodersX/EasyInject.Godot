@@ -1,5 +1,5 @@
 using Godot;
-using EasyInject.Utils;
+using EasyInject.Services;
 
 namespace EasyInject.Controllers
 {
@@ -16,15 +16,15 @@ namespace EasyInject.Controllers
 		/// <summary>
 		/// 
 		/// </summary>
-        private string _sceneName;
-        /// <summary>
-        /// 
-        /// </summary>
-        public override void _Ready()
+		private string _sceneName;
+		/// <summary>
+		/// 
+		/// </summary>
+		public override void _Ready()
 		{
-            _sceneName = GetTree().CurrentScene?.Name;
-            // 初始化 IoC 容器，注册场景所有 Bean
-            Instance.Init();
+			_sceneName = GetTree().CurrentScene?.Name;
+			// 初始化 IoC 容器，注册场景所有 Node
+			Instance.Init();
 		}
 
 		/// <summary>
@@ -32,8 +32,8 @@ namespace EasyInject.Controllers
 		/// </summary>
 		public override void _ExitTree()
 		{
-			// 场景卸载时，自动清除本场景 Bean
-			Instance.ClearBeans(_sceneName);
+			// 场景卸载时，自动清除本场景 Node
+			Instance.ClearNodes(_sceneName);
 		}
 	}
 }

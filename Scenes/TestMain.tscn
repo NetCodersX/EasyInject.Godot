@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://c5b8mlkh05xjh"]
 
-[ext_resource type="Script" uid="uid://b4pwkwscffmit" path="res://Scenes/TestMain.cs" id="1_wk3vb"]
-[ext_resource type="Script" uid="uid://8wfg1tvr6kui" path="res://Scenes/TextLabel.cs" id="2_tpw25"]
+[ext_resource type="Script" uid="uid://dtyle8nwwj4k4" path="res://Scenes/TestMain.cs" id="1_wk3vb"]
+[ext_resource type="Script" uid="uid://c2ya3iis0g4t" path="res://Scenes/TextLabel.cs" id="2_tpw25"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_wk3vb"]
 font_size = 30

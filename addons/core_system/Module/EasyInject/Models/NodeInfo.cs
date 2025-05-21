@@ -4,30 +4,30 @@ using System.Collections.Generic;
 namespace EasyInject.Models
 {
 	/// <summary>
-	/// Bean 信息类，作为字典 Key 唯一标识一个 Bean（名字+类型）。
+	/// Node 信息类，作为字典 Key 唯一标识一个 node（名字+类型）。
 	/// </summary>
-	public class BeanInfo
+	public class NodeInfo
 	{
 		/// <summary>
-		/// Bean 名称
+		/// Node 名称
 		/// </summary>
 		public readonly string Name;
 		/// <summary>
-		/// Bean 类型
+		/// Node 类型
 		/// </summary>
 		public readonly Type Type;
 		/// <summary>
-		/// Bean 所在场景列表
+		/// Node 所在场景列表
 		/// </summary>
 		public readonly List<string> Scenes = new();
 
-		public BeanInfo(string name, Type type)
+		public NodeInfo(string name, Type type)
 		{
 			Name = name;
 			Type = type;
 		}
 
-		public BeanInfo(string name, Type type, string scene)
+		public NodeInfo(string name, Type type, string scene)
 		{
 			Name = name;
 			Type = type;
@@ -39,8 +39,8 @@ namespace EasyInject.Models
 		/// </summary>
 		public override bool Equals(object obj)
 		{
-			if (obj is BeanInfo beanInfo)
-				return Name == beanInfo.Name && Type == beanInfo.Type;
+			if (obj is NodeInfo nodeInfo)
+				return Name == nodeInfo.Name && Type == nodeInfo.Type;
 			return false;
 		}
 
@@ -51,7 +51,7 @@ namespace EasyInject.Models
 
 		public override string ToString()
 		{
-			return $"BeanInfo: {Name} - {Type}";
+			return $"NodeInfo: {Name} - {Type}";
 		}
 	}
 }

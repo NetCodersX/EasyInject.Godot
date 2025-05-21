@@ -7,10 +7,10 @@
 - [Installation and Activation](#installation-and-activation)
 - [Usage](#usage)
   - [CreateNode Automatic Node Creation](#createnode-automatic-node-creation)
-  - [GameObjectBean Game Object Registration](#gameobjectbean-game-object-registration)
+  - [GameObjectNode Game Object Registration](#gameobjectnode-game-object-registration)
   - [Component Regular Class Objects](#component-regular-class-objects)
   - [Dependency Injection](#dependency-injection)
-  - [Bean Naming](#bean-naming)
+  - [Node Naming](#node-naming)
   - [Cross-Scene Persistence](#cross-scene-persistence)
   - [Using the Container API](#using-the-container-api)
 - [Inheritance and Interfaces Based on the Liskov Substitution Principle](#inheritance-and-interfaces-based-on-the-liskov-substitution-principle)
@@ -22,7 +22,7 @@ Godot Easy Inject is a dependency injection plugin developed for the Godot game 
 
 ## Why Choose Godot Easy Inject?
 
-In traditional Godot development, obtaining node references usually requires using ``GetNode<T>(path)`` or exporting variables and manually dragging them in the editor. For example:
+In traditional Godot development, obtaining node references usually requires using `GetNode<T>(path)` or exporting variables and manually dragging them in the editor. For example:
 
     // Traditional way to get node references
     public class Player : Node3D
@@ -30,9 +30,9 @@ In traditional Godot development, obtaining node references usually requires usi
         // Needs to be manually dragged in the editor or found using a path
         [Export]
         private InventorySystem inventory;
-        
+
         private GameStateManager gameState;
-        
+
         public override void _Ready()
         {
             // Hard-coded path to get the node
@@ -43,15 +43,15 @@ In traditional Godot development, obtaining node references usually requires usi
 This approach can lead to high code coupling, easy errors due to path changes, and difficulty in testing in large projects.
 With Godot Easy Inject, you only need to add a few attribute markers to achieve automatic dependency injection:
 
-    [GameObjectBean]
+    [GameObjectNode]
     public class Player : Node3D
     {
         [Autowired]
         private InventorySystem inventory;
-        
+
         [Autowired]
         private GameStateManager gameState;
-        
+
         public override void _Ready()
         {
             // Dependency injected, use directly
@@ -88,9 +88,9 @@ To verify that the plugin is working properly, you can create a simple test scri
 
 ### CreateNode Automatic Node Creation
 
-The `CreateNode` attribute allows the container to automatically create node instances and register them as Beans.
+The `CreateNode` attribute allows the container to automatically create node instances and register them as Nodes.
 
-    // Automatically create a node and register it as a Bean
+    // Automatically create a node and register it as a Node
     [CreateNode]
     public class DebugOverlay : Control
     {
@@ -100,17 +100,17 @@ The `CreateNode` attribute allows the container to automatically create node ins
         }
     }
 
-### GameObjectBean Game Object Registration
+### GameObjectNode Game Object Registration
 
-The `GameObjectBean` attribute is used to register existing nodes in the scene as Beans.
+The `GameObjectNode` attribute is used to register existing nodes in the scene as Nodes.
 
-    // Register the node as a Bean
-    [GameObjectBean]
+    // Register the node as a Node
+    [GameObjectNode]
     public class Player : CharacterBody3D
     {
         [Autowired]
         private GameManager gameManager;
-    
+
         public override void _Ready()
         {
             // gameManager is injected and can be used directly
@@ -119,9 +119,9 @@ The `GameObjectBean` attribute is used to register existing nodes in the scene a
 
 ### Component Regular Class Objects
 
-The `Component` attribute is used to register regular C# classes (non-`Node`) as Beans.
+The `Component` attribute is used to register regular C# classes (non-`Node`) as Nodes.
 
-    // Register a regular class as a Bean
+    // Register a regular class as a Node
     [Component]
     public class GameManager
     {
@@ -130,102 +130,102 @@ The `Component` attribute is used to register regular C# classes (non-`Node`) as
             GD.Print("Game started!");
         }
     }
-    
+
     // Use a custom name
     [Component("MainScoreService")]
     public class ScoreService
     {
         public int Score { get; private set; }
-        
+
         public void AddScore(int points)
         {
             Score += points;
             GD.Print($"Score: {Score}");
         }
     }
-    
+
 ### Dependency Injection
 
 The `Autowired` attribute is used to mark dependencies that need to be injected.
 
     // Field injection
-    [GameObjectBean]
+    [GameObjectNode]
     public class UIController : Control
     {
         // Basic injection
         [Autowired]
         private GameManager gameManager;
-        
+
         // Property injection
         [Autowired]
         public ScoreService ScoreService { get; set; }
-        
+
         // Injection with a name
         [Autowired("MainScoreService")]
         private ScoreService mainScoreService;
-        
+
         public override void _Ready()
         {
             gameManager.StartGame();
             mainScoreService.AddScore(100);
         }
     }
-    
+
     // Constructor injection (only applicable to regular classes, not Node)
     [Component]
     public class GameLogic
     {
         private readonly GameManager gameManager;
         private readonly ScoreService scoreService;
-        
+
         // Constructor injection
         public GameLogic(GameManager gameManager, [Autowired("MainScoreService")] ScoreService scoreService)
         {
             this.gameManager = gameManager;
             this.scoreService = scoreService;
         }
-        
+
         public void ProcessGameLogic()
         {
             gameManager.StartGame();
             scoreService.AddScore(50);
         }
     }
-    
-### Bean Naming
 
-Beans can be named in several ways:
+### Node Naming
+
+Nodes can be named in several ways:
 
     // Use the class name by default
-    [GameObjectBean]
+    [GameObjectNode]
     public class Player : Node3D { }
-    
+
     // Custom name
-    [GameObjectBean("MainPlayer")]
+    [GameObjectNode("MainPlayer")]
     public class Player : Node3D { }
-    
+
     // Use the node name
-    [GameObjectBean(ENameType.GameObjectName)]
+    [GameObjectNode(ENameType.GameObjectName)]
     public class Enemy : Node3D { }
-    
+
     // Use the field value
-    [GameObjectBean(ENameType.FieldValue)]
+    [GameObjectNode(ENameType.FieldValue)]
     public class ItemSpawner : Node3D
     {
-        [BeanName]
+        [NodeName]
         public string SpawnerID = "Level1Spawner";
     }
-    
+
 The `ENameType` enumeration provides the following options:
 
 - `Custom`: Custom name, default value
-- `ClassName`: Use the class name as the Bean name
-- `GameObjectName`: Use the node name as the Bean name
-- `FieldValue`: Use the field value marked with BeanName as the Bean name
+- `ClassName`: Use the class name as the Node name
+- `GameObjectName`: Use the node name as the Node name
+- `FieldValue`: Use the field value marked with NodeName as the Node name
 
 ### Cross-Scene Persistence
 
-The `PersistAcrossScenes` attribute is used to mark Beans that should not be destroyed when switching scenes.
+The `PersistAcrossScenes` attribute is used to mark Nodes that should not be destroyed when switching scenes.
 
     // Persistent game manager
     [PersistAcrossScenes]
@@ -235,10 +235,10 @@ The `PersistAcrossScenes` attribute is used to mark Beans that should not be des
         public int Level { get; set; }
         public int Score { get; set; }
     }
-    
+
     // Persistent audio manager
     [PersistAcrossScenes]
-    [GameObjectBean]
+    [GameObjectNode]
     public class AudioManager : Node
     {
         public override void _Ready()
@@ -246,34 +246,34 @@ The `PersistAcrossScenes` attribute is used to mark Beans that should not be des
             // Ensure it is not destroyed with the scene
             GetTree().Root.CallDeferred("add_child", this);
         }
-        
+
         public void PlaySFX(string sfxPath)
         {
             // Play sound effect logic
         }
     }
-    
+
 ### Using the Container API
 
-The container provides the following main methods for manually managing Beans:
+The container provides the following main methods for manually managing Nodes:
 
     // Get the IoC instance
     var ioc = GetNode("/root/CoreSystem").GetIoC();
-    
-    // Get the Bean
-    var player = ioc.GetBean<Player>();
-    var namedPlayer = ioc.GetBean<Player>("MainPlayer");
-    
-    // Create a node Bean
-    var enemy = ioc.CreateNodeAsBean<Enemy>(enemyResource, "Boss", spawnPoint.Position, Quaternion.Identity);
-    
-    // Delete a node Bean
-    ioc.DeleteNodeBean<Enemy>(enemy, "Boss", true);
-    
-    // Clear Beans
-    ioc.ClearBeans(); // Clear Beans in the current scene
-    ioc.ClearBeans("MainLevel"); // Clear Beans in the specified scene
-    ioc.ClearBeans(true); // Clear all Beans, including persistent Beans
+
+    // Get the Node
+    var player = ioc.GetNode<Player>();
+    var namedPlayer = ioc.GetNode<Player>("MainPlayer");
+
+    // Create a node Node
+    var enemy = ioc.CreateNodeAsNode<Enemy>(enemyResource, "Boss", spawnPoint.Position, Quaternion.Identity);
+
+    // Delete a node Node
+    ioc.DeleteNodeNode<Enemy>(enemy, "Boss", true);
+
+    // Clear Nodes
+    ioc.ClearNodes(); // Clear Nodes in the current scene
+    ioc.ClearNodes("MainLevel"); // Clear Nodes in the specified scene
+    ioc.ClearNodes(true); // Clear all Nodes, including persistent Nodes
 
 ## Inheritance and Interfaces Based on the Liskov Substitution Principle
 
@@ -284,9 +284,9 @@ The container supports loosely coupled dependency injection through interfaces o
     {
         void Attack();
     }
-    
-    // Bean implementing the interface
-    [GameObjectBean("Sword")]
+
+    // Node implementing the interface
+    [GameObjectNode("Sword")]
     public class Sword : Node3D, IWeapon
     {
         public void Attack()
@@ -294,9 +294,9 @@ The container supports loosely coupled dependency injection through interfaces o
             GD.Print("Sword attack!");
         }
     }
-    
+
     // Another implementation
-    [GameObjectBean("Bow")]
+    [GameObjectNode("Bow")]
     public class Bow : Node3D, IWeapon
     {
         public void Attack()
@@ -304,22 +304,22 @@ The container supports loosely coupled dependency injection through interfaces o
             GD.Print("Bow attack!");
         }
     }
-    
+
     // Inject through the interface
-    [GameObjectBean]
+    [GameObjectNode]
     public class Player : CharacterBody3D
     {
         [Autowired("Sword")]
         private IWeapon meleeWeapon;
-        
+
         [Autowired("Bow")]
         private IWeapon rangedWeapon;
-        
+
         public void AttackWithMelee()
         {
             meleeWeapon.Attack();
         }
-        
+
         public void AttackWithRanged()
         {
             rangedWeapon.Attack();

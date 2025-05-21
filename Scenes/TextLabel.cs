@@ -2,7 +2,7 @@ using EasyInject.Attributes;
 using Godot;
 using System;
 
-[GameObjectBean]
+[GameObjectService]
 public partial class TextLabel : Label
 {
 	public void SetText(string val)

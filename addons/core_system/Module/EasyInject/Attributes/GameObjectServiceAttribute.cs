@@ -3,14 +3,14 @@ using System;
 namespace EasyInject.Attributes
 {
 	/// <summary>
-	/// 标记 Node 为需要 IoC 管理的场景 Bean。
+	/// 标记 Node 为需要 IoC 管理的服务对象。
 	/// 可指定名字或命名方式。
 	/// </summary>
 	[AttributeUsage(AttributeTargets.Class)]
-	public class GameObjectBeanAttribute : Attribute
+	public class GameObjectServiceAttribute : Attribute
 	{
 		/// <summary>
-		/// Bean 名字
+		/// node 名字
 		/// </summary>
 		public string Name { get; }
 
@@ -20,9 +20,9 @@ namespace EasyInject.Attributes
 		public ENameType NameType { get; }
 
 		/// <summary>
-		/// 通过自定义名字作为 Bean 名
+		/// 通过自定义名字作为 node 名
 		/// </summary>
-		public GameObjectBeanAttribute(string name)
+		public GameObjectServiceAttribute(string name)
 		{
 			Name = name;
 			NameType = ENameType.Custom;
@@ -30,7 +30,7 @@ namespace EasyInject.Attributes
 		/// <summary>
 		/// 默认自定义名字（空）
 		/// </summary>
-		public GameObjectBeanAttribute()
+		public GameObjectServiceAttribute()
 		{
 			Name = string.Empty;
 			NameType = ENameType.Custom;
@@ -38,14 +38,14 @@ namespace EasyInject.Attributes
 		/// <summary>
 		/// 通过指定名字类型
 		/// </summary>
-		public GameObjectBeanAttribute(ENameType nameType)
+		public GameObjectServiceAttribute(ENameType nameType)
 		{
 			NameType = nameType;
 		}
 	}
 
 	/// <summary>
-	/// Bean 名字类型枚举
+	/// Node 名字类型枚举
 	/// </summary>
 	public enum ENameType
 	{
