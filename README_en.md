@@ -88,7 +88,7 @@ To verify that the plugin is working properly, you can create a simple test scri
 
 ### CreateNode Automatic Node Creation
 
-The `CreateNode` attribute allows the container to automatically create node instances and register them as Nodes.
+The `CreateNode` attribute allows the container to automatically create node instances and register them as Service.
 
     // Automatically create a node and register it as a Node
     [CreateNode]

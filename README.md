@@ -121,7 +121,7 @@ Godot Easy Inject 是一个为 Godot 游戏引擎开发的依赖注入插件，�
 
 ### Component 普通类对象
 
-`Component` 特性用于注册普通 C# 类（非 `Node`）为 Node。
+`Component` 特性用于注册普通 C# 类（非 `Node`）服务。
 
     // 注册普通类为Node
     [Component]
