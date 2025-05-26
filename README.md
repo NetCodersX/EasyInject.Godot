@@ -218,7 +218,7 @@ Node 可以通过多种方式命名：
         public string SpawnerID = "Level1Spawner";
     }
 
-`ENameType` 枚举提供了以下选项：
+`NamingStrategy` 枚举提供了以下命名策略选项：
 
 - `Custom`：自定义名称，默认值
 - `ClassName`：使用类名作为 Node 名称
