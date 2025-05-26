@@ -5,14 +5,14 @@ namespace EasyInject.Controllers
 {
 	/// <summary>
 	/// 全局初始化器节点。
-	/// 挂载于主场景根节点，负责场景加载时初始化 IoC 容器。
+	/// <para>挂载于主场景根节点，负责场景加载时初始化 IoC 容器。</para>
 	/// </summary>
-	public partial class GlobalInitializer : Node
+	public partial class ContainerInitializer : Node
 	{
 		/// <summary>
 		/// 全局唯一 IoC 实例（静态单例）。
 		/// </summary>
-		public static IIoC Instance { get; } = new MyIoC();
+		public static INodeContainer Instance { get; } = new NodeContainer();
 		/// <summary>
 		/// 
 		/// </summary>
@@ -24,7 +24,7 @@ namespace EasyInject.Controllers
 		{
 			_sceneName = GetTree().CurrentScene?.Name;
 			// 初始化 IoC 容器，注册场景所有 Node
-			Instance.Init();
+			Instance.Initialize();
 		}
 
 		/// <summary>
@@ -33,7 +33,7 @@ namespace EasyInject.Controllers
 		public override void _ExitTree()
 		{
 			// 场景卸载时，自动清除本场景 Node
-			Instance.ClearNodes(_sceneName);
+			Instance.ClearNodesService(_sceneName);
 		}
 	}
 }

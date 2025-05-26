@@ -2,10 +2,10 @@ using EasyInject.Attributes;
 using Godot;
 using System;
 
-[GameObjectService]
+[NodeService]
 public partial class TestMain : Node2D
 {
-	[Autowired]
+	[Inject]
 	public TextLabel TextLabel { get; set; }
 
 	public override void _Ready()

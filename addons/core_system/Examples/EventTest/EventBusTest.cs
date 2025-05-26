@@ -9,7 +9,7 @@ using System.Collections.Generic;
 public partial class EventBusTest : Node2D
 {
 	// 事件总线实例引用
-	[Autowired]
+	[Inject]
 	private EventBus _eventBus { get; set; }
 
 	// 自定义事件类型定义

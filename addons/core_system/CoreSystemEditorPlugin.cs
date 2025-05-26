@@ -36,7 +36,7 @@ public partial class CoreSystemEditorPlugin : EditorPlugin
 	{
 		// 获取脚本路径 - 使用正确的方法访问当前脚本
 		// SYSTEM_PATH = GetScriptDirectoryPath() + "/Module/CoreSystem.cs";
-		SYSTEM_PATH = GetScriptDirectoryPath() + "/Module/EasyInject/Controllers/GlobalInitializer.cs";
+		SYSTEM_PATH = GetScriptDirectoryPath() + "/Module/EasyInject/Controllers/ContainerInitializer.cs";
 
 		// 添加项目设置和自动加载单例
 		AddProjectSettings();

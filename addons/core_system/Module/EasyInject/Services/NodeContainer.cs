@@ -12,7 +12,7 @@ namespace EasyInject.Services
 	/// <summary>
 	/// IoC容器实现类，用于管理节点（Node）和普通对象的依赖注入与生命周期
 	/// </summary>
-	public partial class MyIoC : IIoC
+	public partial class NodeContainer : INodeContainer
 	{
 		/// <summary>
 		/// IoC容器，存储所有已注册的Node对象，key为NodeInfo（包含名字、类型、场景），value为实例
@@ -22,12 +22,12 @@ namespace EasyInject.Services
 		/// <summary>
 		/// 尚未完成依赖注入的实例，key为ShelvedInstance（包含名字和实例），value为已注入的字段名集合
 		/// </summary>
-		private readonly Dictionary<ShelvedInstance, HashSet<string>> _shelvedInstances = new();
+		private readonly Dictionary<PendingInjection, HashSet<string>> _shelvedInstances = new();
 
 		/// <summary>
 		/// 构造函数，完成自身注册和普通对象Node的初始化
 		/// </summary>
-		public MyIoC()
+		public NodeContainer()
 		{
 			var type = GetType();
 			// 注册自身为Node，使其他对象可以直接注入IoC容器
@@ -159,7 +159,7 @@ namespace EasyInject.Services
 		}
 
 		/// <summary>
-		/// 删除一个Node，可延迟删除
+		/// 删除Node并注销服务，可延迟删除
 		/// </summary>
 		/// <typeparam name="T">节点类型</typeparam>
 		/// <param name="node">要删除的节点Node</param>
@@ -167,7 +167,7 @@ namespace EasyInject.Services
 		/// <param name="deleteNode">是否删除节点本身</param>
 		/// <param name="t">延迟秒数</param>
 		/// <returns>是否成功删除</returns>
-		public bool DeleteNode<T>(T node, string nodeName = "", bool deleteNode = false, float t = 0.0f) where T : Node
+		public bool DeleteNodeService<T>(T node, string nodeName = "", bool deleteNode = false, float t = 0.0f) where T : Node
 		{
 			// 如果传入的Node为null，返回失败
 			if (node == null) return false;
@@ -199,14 +199,14 @@ namespace EasyInject.Services
 		}
 
 		/// <summary>
-		/// 立即删除一个Node
+		/// 立即删除Node并注销服务
 		/// </summary>
 		/// <typeparam name="T">节点类型</typeparam>
 		/// <param name="node">要删除的节点Node</param>
 		/// <param name="nodeName">Node名称</param>
 		/// <param name="deleteNode">是否删除节点本身</param>
 		/// <returns>是否成功删除</returns>
-		public bool DeleteNodeImmediate<T>(T node, string nodeName = "", bool deleteNode = false) where T : Node
+		public bool DeleteNodeImmediateService<T>(T node, string nodeName = "", bool deleteNode = false) where T : Node
 		{
 			// 如果传入的Node为null，返回失败
 			if (node == null) return false;
@@ -228,7 +228,7 @@ namespace EasyInject.Services
 		/// <typeparam name="T">Node类型</typeparam>
 		/// <param name="name">Node名称，默认空字符串</param>
 		/// <returns>找到的Node实例，未找到返回null</returns>
-		public T GetNode<T>(string name = "") where T : class
+		public T GetNodeService<T>(string name = "") where T : class
 		{
 			// 创建NodeInfo用于在容器中查找
 			var NodeInfo = new NodeInfo(name, typeof(T));
@@ -243,7 +243,7 @@ namespace EasyInject.Services
 		/// </summary>
 		/// <param name="scene">要清理的场景名称，默认当前场景</param>
 		/// <param name="clearAcrossScenesNodes">是否同时清理跨场景Node</param>
-		public void ClearNodes(string scene = null, bool clearAcrossScenesNodes = false)
+		public void ClearNodesService(string scene = null, bool clearAcrossScenesNodes = false)
 		{
 			// 获取当前场景名，如果未指定则使用当前场景
 			scene ??= GetRoot().CurrentScene?.Name ?? "root";
@@ -264,27 +264,27 @@ namespace EasyInject.Services
 		/// 清空指定/全部场景下的Node（重载）
 		/// </summary>
 		/// <param name="clearAcrossScenesNodes">是否同时清理跨场景Node</param>
-		public void ClearNodes(bool clearAcrossScenesNodes)
+		public void ClearAllNodesService(bool clearAcrossScenesNodes)
 		{
 			// 调用主清理方法，使用默认场景参数
-			ClearNodes(null, clearAcrossScenesNodes);
+			ClearNodesService(null, clearAcrossScenesNodes);
 		}
 
 		/// <summary>
 		/// 初始化场景中的Node Node和所有带有GameObjectNodeAttribute的节点
 		/// </summary>
-		public void Init()
+		public void Initialize()
 		{
 			// 获取当前场景名，如果无法获取则默认为"root"
 			var scene = GetRoot().CurrentScene?.Name ?? "root";
 			// 查找所有继承自NodeObject的节点
-			var NodeObjects = FindNodesOfType<NodeObject>();
+			var NodeObjects = FindNodesOfType<InjectableNode>();
 
 			// 遍历所有NodeObject节点
 			foreach (var NodeObject in NodeObjects)
 			{
 				// 检查IoC容器中是否已存在同名同类型的Node，存在则跳过
-				if (_Nodes.ContainsKey(new NodeInfo(NodeObject.Name, typeof(NodeObject))))
+				if (_Nodes.ContainsKey(new NodeInfo(NodeObject.Name, typeof(InjectableNode))))
 				{
 					continue;
 				}
@@ -294,36 +294,36 @@ namespace EasyInject.Services
 			}
 
 			// 查找所有打了GameObjectNodeAttribute的节点
-			var gameObjectNodes = FindNodesWithAttribute<GameObjectServiceAttribute>();
+			var gameObjectNodes = FindNodesWithAttribute<NodeServiceAttribute>();
 
 			// 遍历每个符合条件的节点
 			foreach (var gameObjectNode in gameObjectNodes)
 			{
 				// 通过反射获取节点类型上的GameObjectNodeAttribute实例
-				var attribute = gameObjectNode.GetType().GetCustomAttribute<GameObjectServiceAttribute>();
+				var attribute = gameObjectNode.GetType().GetCustomAttribute<NodeServiceAttribute>();
 				string name = string.Empty;
 
 				// 根据Attribute的NameType属性决定Node的命名方式
 				switch (attribute.NameType)
 				{
-					case ENameType.Custom:
+					case NamingStrategy.Custom:
 						// 如果指定为自定义名，直接取Attribute.Name
 						name = attribute.Name;
 						break;
-					case ENameType.ClassName:
+					case NamingStrategy.ClassName:
 						// 如果指定为类名，用节点脚本的类型名
 						name = gameObjectNode.GetType().Name;
 						break;
-					case ENameType.GameObjectName:
+					case NamingStrategy.NodeName:
 						// 如果指定为节点名，用Godot中的Node.Name
 						name = gameObjectNode.Name;
 						break;
-					case ENameType.FieldValue:
+					case NamingStrategy.FieldValue:
 						// 如果指定为字段值，则查找带NodeNameAttribute的字段，并取其值作为Node名
 						var field = gameObjectNode
 							.GetType()
 							.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-							.FirstOrDefault(f => f.GetCustomAttribute<ServiceNameAttribute>() != null);
+							.FirstOrDefault(f => f.GetCustomAttribute<ServiceIdentifierAttribute>() != null);
 
 						// 如果找到合适字段，取其值，否则为空字符串
 						name = field != null ? field.GetValue(gameObjectNode)?.ToString() ?? string.Empty : string.Empty;
@@ -356,7 +356,7 @@ namespace EasyInject.Services
 			// 获取所有带ComponentAttribute的类型
 			var types = AppDomain.CurrentDomain.GetAssemblies()
 				.SelectMany(a => a.GetTypes())
-				.Where(t => t.GetCustomAttributes(typeof(ComponentAttribute), true).Length > 0).ToList();
+				.Where(t => t.GetCustomAttributes(typeof(ServiceAttribute), true).Length > 0).ToList();
 
 			// 只要还有未处理的类型，循环处理
 			while (types.Count > 0)
@@ -379,7 +379,7 @@ namespace EasyInject.Services
 						{
 							var parameterType = parameters[j].ParameterType;
 							// 查找构造参数上的AutowiredAttribute
-							var name = parameters[j].GetCustomAttribute<AutowiredAttribute>()?.Name ?? parameterType.Name;
+							var name = parameters[j].GetCustomAttribute<InjectAttribute>()?.Name ?? parameterType.Name;
 							var NodeInfo = new NodeInfo(name, parameterType);
 
 							// 从容器中查找对应类型和名字的Node，未找到则跳出
@@ -408,7 +408,7 @@ namespace EasyInject.Services
 					// 仍然无法实例化则跳过
 					if (instance == null) continue;
 					//获取要注入的类名称
-					var attributeName = type.GetCustomAttribute<ComponentAttribute>()?.Name ?? type.Name;
+					var attributeName = type.GetCustomAttribute<ServiceAttribute>()?.Name ?? type.Name;
 
 					// 注册该类型以及其父类和接口为Node
 					RegisterTypeAndParentsAndInterfaces(attributeName, instance, type);
@@ -433,7 +433,7 @@ namespace EasyInject.Services
 				// 找到所有带AutowiredAttribute的字段
 				var fields = instance.GetType()
 					.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-					.Where(f => f.GetCustomAttributes(typeof(AutowiredAttribute), true).Length > 0).ToList();
+					.Where(f => f.GetCustomAttributes(typeof(InjectAttribute), true).Length > 0).ToList();
 
 				// 用于记录已注入的字段名
 				var injected = new HashSet<string>();
@@ -442,7 +442,7 @@ namespace EasyInject.Services
 				foreach (var field in fields)
 				{
 					// 获取注入名
-					var name = field.GetCustomAttribute<AutowiredAttribute>()?.Name ?? field.Name;
+					var name = field.GetCustomAttribute<InjectAttribute>()?.Name ?? field.Name;
 					var NodeInfo = new NodeInfo(name, field.FieldType);
 
 					// 如果找到对应Node，注入并标记已注入
@@ -454,19 +454,19 @@ namespace EasyInject.Services
 					else
 					{
 						// 如果找不到依赖Node，将当前实例和字段注册到_shelvedInstances等待后续注入
-						_shelvedInstances.TryAdd(new ShelvedInstance(type.Name, instance), injected);
+						_shelvedInstances.TryAdd(new PendingInjection(type.Name, instance), injected);
 					}
 				}
 
 				// 找到所有带AutowiredAttribute的属性
 				var properties = instance.GetType()
 					.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-					.Where(p => p.GetCustomAttributes(typeof(AutowiredAttribute), true).Length > 0).ToList();
+					.Where(p => p.GetCustomAttributes(typeof(InjectAttribute), true).Length > 0).ToList();
 
 				// 遍历每个需注入的属性
 				foreach (var property in properties)
 				{
-					var name = property.GetCustomAttribute<AutowiredAttribute>()?.Name ?? property.PropertyType.Name;
+					var name = property.GetCustomAttribute<InjectAttribute>()?.Name ?? property.PropertyType.Name;
 					var NodeInfo = new NodeInfo(name, property.PropertyType);
 
 					if (_Nodes.TryGetValue(NodeInfo, out var value))
@@ -477,7 +477,7 @@ namespace EasyInject.Services
 					else
 					{
 						// 如果找不到依赖Node，将当前实例和字段注册到_shelvedInstances等待后续注入
-						_shelvedInstances.TryAdd(new ShelvedInstance(type.Name, instance), injected);
+						_shelvedInstances.TryAdd(new PendingInjection(type.Name, instance), injected);
 					}
 				}
 			}
@@ -518,7 +518,7 @@ namespace EasyInject.Services
 					// 如果需要添加到场景树
 					if (attr.AddToScene && !string.IsNullOrEmpty(attr.ParentNodeName))
 					{
-						var parentNode = GetNode<Node>(attr.ParentNodeName);
+						var parentNode = GetNodeService<Node>(attr.ParentNodeName);
 						if (parentNode != null)
 						{
 							parentNode.AddChild(node);
@@ -565,7 +565,7 @@ namespace EasyInject.Services
 					// 如果需要添加到场景树
 					if (attr.AddToScene && !string.IsNullOrEmpty(attr.ParentNodeName))
 					{
-						var parentNode = GetNode<Node>(attr.ParentNodeName);
+						var parentNode = GetNodeService<Node>(attr.ParentNodeName);
 						if (parentNode != null)
 						{
 							parentNode.AddChild(node);
@@ -591,7 +591,7 @@ namespace EasyInject.Services
 		private string DetermineNodeName(CreateNodeAttribute attr, Type type)
 		{
 			// 如果是自定义名称且名称不为空，则使用自定义名称
-			if (attr.NameType == ENameType.Custom && !string.IsNullOrEmpty(attr.Name))
+			if (attr.NameType == NamingStrategy.Custom && !string.IsNullOrEmpty(attr.Name))
 			{
 				return attr.Name;
 			}
@@ -599,18 +599,18 @@ namespace EasyInject.Services
 			// 根据命名策略确定名称
 			switch (attr.NameType)
 			{
-				case ENameType.Custom:
+				case NamingStrategy.Custom:
 					// 如果是自定义但名称为空，回退到类名
 					return type.Name;
 
-				case ENameType.ClassName:
+				case NamingStrategy.ClassName:
 					return type.Name;
 
-				case ENameType.GameObjectName:
+				case NamingStrategy.NodeName:
 					// 对于节点，可能需要在创建后设置名称
 					return type.Name;
 
-				case ENameType.FieldValue:
+				case NamingStrategy.FieldValue:
 					// 对于NodeNode，通常不会使用字段值命名
 					return type.Name;
 
@@ -629,7 +629,7 @@ namespace EasyInject.Services
 
 			// 找到所有需注入的字段
 			var fields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-				.Where(f => f.GetCustomAttributes(typeof(AutowiredAttribute), true).Length > 0);
+				.Where(f => f.GetCustomAttributes(typeof(InjectAttribute), true).Length > 0);
 
 			// 记录已注入字段的集合
 			var injected = new HashSet<string>();
@@ -638,7 +638,7 @@ namespace EasyInject.Services
 			foreach (var field in fields)
 			{
 				// 获取字段上的AutowiredAttribute的Name属性作为Node名
-				var autowiredAttr = field.GetCustomAttribute<AutowiredAttribute>();
+				var autowiredAttr = field.GetCustomAttribute<InjectAttribute>();
 				var name = autowiredAttr?.Name;
 				// 如果name为空，则尝试根据字段类型获取实现类名称
 				if (string.IsNullOrEmpty(name))
@@ -655,7 +655,7 @@ namespace EasyInject.Services
 				}
 				else
 				{
-					var insKey = new ShelvedInstance(NodeName, instance);
+					var insKey = new PendingInjection(NodeName, instance);
 					_shelvedInstances.TryAdd(insKey, injected);
 					break; // 遇到未注入就break，避免重复加入_shelvedInstances
 				}
@@ -663,12 +663,12 @@ namespace EasyInject.Services
 
 			// 找到所有需注入的属性
 			var properties = type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-				.Where(p => p.GetCustomAttributes(typeof(AutowiredAttribute), true).Length > 0);
+				.Where(p => p.GetCustomAttributes(typeof(InjectAttribute), true).Length > 0);
 
 			// 遍历每个需注入的属性
 			foreach (var property in properties)
 			{
-				var autowiredAttr = property.GetCustomAttribute<AutowiredAttribute>();
+				var autowiredAttr = property.GetCustomAttribute<InjectAttribute>();
 				var name = autowiredAttr?.Name;
 				// 如果name为空，则尝试根据属性类型获取实现类名称
 				if (string.IsNullOrEmpty(name))
@@ -684,7 +684,7 @@ namespace EasyInject.Services
 				}
 				else
 				{
-					var insKey = new ShelvedInstance(NodeName, instance);
+					var insKey = new PendingInjection(NodeName, instance);
 					_shelvedInstances.TryAdd(insKey, injected);
 					break;
 				}
@@ -725,12 +725,12 @@ namespace EasyInject.Services
 				// 获取所有需注入的字段
 				var insFields = key.Instance.GetType()
 					.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-					.Where(f => f.GetCustomAttributes(typeof(AutowiredAttribute), true).Length > 0).ToList();
+					.Where(f => f.GetCustomAttributes(typeof(InjectAttribute), true).Length > 0).ToList();
 
 				// 获取所有需注入的属性
 				var insProperties = key.Instance.GetType()
 					.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-					.Where(p => p.GetCustomAttributes(typeof(AutowiredAttribute), true).Length > 0).ToList();
+					.Where(p => p.GetCustomAttributes(typeof(InjectAttribute), true).Length > 0).ToList();
 
 				// 计算总的需注入项数
 				var count = insFields.Count + insProperties.Count;
@@ -746,7 +746,7 @@ namespace EasyInject.Services
 					}
 
 					// 获取字段上的注入名
-					var name = field.GetCustomAttribute<AutowiredAttribute>().Name ?? field.FieldType.Name;
+					var name = field.GetCustomAttribute<InjectAttribute>().Name ?? field.FieldType.Name;
 					var NodeInfo = new NodeInfo(name, field.FieldType);
 
 					// 如果找到依赖Node，注入并计数
@@ -772,7 +772,7 @@ namespace EasyInject.Services
 					}
 
 					// 获取属性上的注入名
-					var name = property.GetCustomAttribute<AutowiredAttribute>().Name ?? property.PropertyType.Name;
+					var name = property.GetCustomAttribute<InjectAttribute>().Name ?? property.PropertyType.Name;
 					var NodeInfo = new NodeInfo(name, property.PropertyType);
 
 					if (!_Nodes.TryGetValue(NodeInfo, out var value))

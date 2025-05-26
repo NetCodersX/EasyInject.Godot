@@ -7,7 +7,7 @@ using static EventBus;
 /// <summary>
 /// 日志服务 - 统一管理框架中的日志输出
 /// </summary>
-[Component]
+[Service]
 public class Logger : IDisposable
 {
 	/// <summary>日志级别枚举</summary>
@@ -59,7 +59,7 @@ public class Logger : IDisposable
 	/// 事件总线
 	/// </summary>
 	/// <value></value>
-	[Autowired]
+	[Inject]
 	public EventBus _eventBus { get; set; }
 
 	/// <summary>

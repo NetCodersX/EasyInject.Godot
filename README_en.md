@@ -7,8 +7,8 @@
 - [Installation and Activation](#installation-and-activation)
 - [Usage](#usage)
   - [CreateNode Automatic Node Creation](#createnode-automatic-node-creation)
-  - [GameObjectService Game Object Registration](#gameobjectservice-game-object-registration)
-  - [Component Regular Class Objects](#component-regular-class-objects)
+  - [NodeService Game Object Registration](#NodeService-game-object-registration)
+  - [Service Regular Class Objects](#Service-regular-class-objects)
   - [Dependency Injection](#dependency-injection)
   - [Node Naming](#node-naming)
   - [Cross-Scene Persistence](#cross-scene-persistence)
@@ -18,7 +18,7 @@
 
 ## Introduction
 
-Godot Easy Inject is a dependency injection plugin developed for the Godot game engine, helping developers better manage dependencies between game components, making code more modular, testable, and maintainable.
+Godot Easy Inject is a dependency injection plugin developed for the Godot game engine, helping developers better manage dependencies between game Services, making code more modular, testable, and maintainable.
 
 ## Why Choose Godot Easy Inject?
 
@@ -43,13 +43,13 @@ In traditional Godot development, obtaining node references usually requires usi
 This approach can lead to high code coupling, easy errors due to path changes, and difficulty in testing in large projects.
 With Godot Easy Inject, you only need to add a few attribute markers to achieve automatic dependency injection:
 
-    [GameObjectService]
+    [NodeService]
     public class Player : Node3D
     {
-        [Autowired]
+        [Inject]
         private InventorySystem inventory;
 
-        [Autowired]
+        [Inject]
         private GameStateManager gameState;
 
         public override void _Ready()
@@ -100,15 +100,15 @@ The `CreateNode` attribute allows the container to automatically create node ins
         }
     }
 
-### GameObjectService Game Object Registration
+### NodeService Game Object Registration
 
-The `GameObjectService` attribute is used to register existing nodes in the scene as Nodes.
+The `NodeService` attribute is used to register existing nodes in the scene as Nodes.
 
     // Register the node as a Node
-    [GameObjectService]
+    [NodeService]
     public class Player : CharacterBody3D
     {
-        [Autowired]
+        [Inject]
         private GameManager gameManager;
 
         public override void _Ready()
@@ -117,12 +117,12 @@ The `GameObjectService` attribute is used to register existing nodes in the scen
         }
     }
 
-### Component Regular Class Objects
+### Service Regular Class Objects
 
-The `Component` attribute is used to register regular C# classes (non-`Node`) as Nodes.
+The `Service` attribute is used to register regular C# classes (non-`Node`) as Nodes.
 
     // Register a regular class as a Node
-    [Component]
+    [Service]
     public class GameManager
     {
         public void StartGame()
@@ -132,7 +132,7 @@ The `Component` attribute is used to register regular C# classes (non-`Node`) as
     }
 
     // Use a custom name
-    [Component("MainScoreService")]
+    [Service("MainScoreService")]
     public class ScoreService
     {
         public int Score { get; private set; }
@@ -146,22 +146,22 @@ The `Component` attribute is used to register regular C# classes (non-`Node`) as
 
 ### Dependency Injection
 
-The `Autowired` attribute is used to mark dependencies that need to be injected.
+The `Inject` attribute is used to mark dependencies that need to be injected.
 
     // Field injection
-    [GameObjectService]
+    [NodeService]
     public class UIController : Control
     {
         // Basic injection
-        [Autowired]
+        [Inject]
         private GameManager gameManager;
 
         // Property injection
-        [Autowired]
+        [Inject]
         public ScoreService ScoreService { get; set; }
 
         // Injection with a name
-        [Autowired("MainScoreService")]
+        [Inject("MainScoreService")]
         private ScoreService mainScoreService;
 
         public override void _Ready()
@@ -172,14 +172,14 @@ The `Autowired` attribute is used to mark dependencies that need to be injected.
     }
 
     // Constructor injection (only applicable to regular classes, not Node)
-    [Component]
+    [Service]
     public class GameLogic
     {
         private readonly GameManager gameManager;
         private readonly ScoreService scoreService;
 
         // Constructor injection
-        public GameLogic(GameManager gameManager, [Autowired("MainScoreService")] ScoreService scoreService)
+        public GameLogic(GameManager gameManager, [Inject("MainScoreService")] ScoreService scoreService)
         {
             this.gameManager = gameManager;
             this.scoreService = scoreService;
@@ -197,19 +197,19 @@ The `Autowired` attribute is used to mark dependencies that need to be injected.
 Nodes can be named in several ways:
 
     // Use the class name by default
-    [GameObjectService]
+    [NodeService]
     public class Player : Node3D { }
 
     // Custom name
-    [GameObjectService("MainPlayer")]
+    [NodeService("MainPlayer")]
     public class Player : Node3D { }
 
     // Use the node name
-    [GameObjectService(ENameType.GameObjectName)]
+    [NodeService(ENameType.GameObjectName)]
     public class Enemy : Node3D { }
 
     // Use the field value
-    [GameObjectService(ENameType.FieldValue)]
+    [NodeService(ENameType.FieldValue)]
     public class ItemSpawner : Node3D
     {
         [NodeName]
@@ -229,7 +229,7 @@ The `PersistAcrossScenes` attribute is used to mark Nodes that should not be des
 
     // Persistent game manager
     [PersistAcrossScenes]
-    [Component]
+    [Service]
     public class GameProgress
     {
         public int Level { get; set; }
@@ -238,7 +238,7 @@ The `PersistAcrossScenes` attribute is used to mark Nodes that should not be des
 
     // Persistent audio manager
     [PersistAcrossScenes]
-    [GameObjectService]
+    [NodeService]
     public class AudioManager : Node
     {
         public override void _Ready()
@@ -271,9 +271,9 @@ The container provides the following main methods for manually managing Nodes:
     ioc.DeleteNodeNode<Enemy>(enemy, "Boss", true);
 
     // Clear Nodes
-    ioc.ClearNodes(); // Clear Nodes in the current scene
-    ioc.ClearNodes("MainLevel"); // Clear Nodes in the specified scene
-    ioc.ClearNodes(true); // Clear all Nodes, including persistent Nodes
+    ioc.ClearNodesServices(); // Clear Nodes in the current scene
+    ioc.ClearNodesServices("MainLevel"); // Clear Nodes in the specified scene
+    ioc.ClearAllNodesServices(true); // Clear all Nodes, including persistent Nodes
 
 ## Inheritance and Interfaces Based on the Liskov Substitution Principle
 
@@ -286,7 +286,7 @@ The container supports loosely coupled dependency injection through interfaces o
     }
 
     // Node implementing the interface
-    [GameObjectService("Sword")]
+    [NodeService("Sword")]
     public class Sword : Node3D, IWeapon
     {
         public void Attack()
@@ -296,7 +296,7 @@ The container supports loosely coupled dependency injection through interfaces o
     }
 
     // Another implementation
-    [GameObjectService("Bow")]
+    [NodeService("Bow")]
     public class Bow : Node3D, IWeapon
     {
         public void Attack()
@@ -306,13 +306,13 @@ The container supports loosely coupled dependency injection through interfaces o
     }
 
     // Inject through the interface
-    [GameObjectService]
+    [NodeService]
     public class Player : CharacterBody3D
     {
-        [Autowired("Sword")]
+        [Inject("Sword")]
         private IWeapon meleeWeapon;
 
-        [Autowired("Bow")]
+        [Inject("Bow")]
         private IWeapon rangedWeapon;
 
         public void AttackWithMelee()

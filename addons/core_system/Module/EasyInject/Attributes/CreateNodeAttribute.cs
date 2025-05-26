@@ -19,7 +19,7 @@ namespace EasyInject.Attributes
 		/// <summary>
 		/// Node的命名策略
 		/// </summary>
-		public ENameType NameType { get; }
+		public NamingStrategy NameType { get; }
 
 		/// <summary>
 		/// 是否应添加到场景树
@@ -37,7 +37,7 @@ namespace EasyInject.Attributes
 		/// <param name="nameType">node命名策略</param>
 		/// <param name="addToScene">是否添加到场景树</param>
 		/// <param name="parentNodeName">父节点名称</param>
-		public CreateNodeAttribute(ENameType nameType = ENameType.ClassName, bool addToScene = true, string parentNodeName = ".")
+		public CreateNodeAttribute(NamingStrategy nameType = NamingStrategy.ClassName, bool addToScene = true, string parentNodeName = ".")
 		{
 			NameType = nameType;
 			AddToScene = addToScene;
@@ -54,7 +54,7 @@ namespace EasyInject.Attributes
 		public CreateNodeAttribute(string name, bool addToScene = false, string parentNodeName = "")
 		{
 			Name = name;
-			NameType = ENameType.Custom;
+			NameType = NamingStrategy.Custom;
 			AddToScene = addToScene;
 			ParentNodeName = parentNodeName;
 		}

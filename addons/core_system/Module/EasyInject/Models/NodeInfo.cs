@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace EasyInject.Models
 {
 	/// <summary>
-	/// Node 信息类，作为字典 Key 唯一标识一个 node（名字+类型）。
+	/// Node 注入信息类，作为字典 Key 唯一标识一个 node（名字+类型）。
 	/// </summary>
 	public class NodeInfo
 	{

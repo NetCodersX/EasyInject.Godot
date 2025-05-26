@@ -3,11 +3,10 @@ using System;
 namespace EasyInject.Attributes
 {
 	/// <summary>
-	/// 用于标记普通 C# 类为组件 （非 Node）。
-	/// 支持依赖注入。
+	/// 用于标记普通 C#类注入。
 	/// </summary>
 	[AttributeUsage(AttributeTargets.Class)]
-	public class ComponentAttribute : Attribute
+	public class ServiceAttribute : Attribute
 	{
 		/// <summary>
 		/// Node 名称（可选）。
@@ -17,7 +16,7 @@ namespace EasyInject.Attributes
 		/// <summary>
 		/// 指定 Node 名称。
 		/// </summary>
-		public ComponentAttribute(string name = null)
+		public ServiceAttribute(string name = null)
 		{
 			Name = name;
 		}

@@ -9,8 +9,8 @@
 - [安装与启用](#安装与启用)
 - [使用方法](#使用方法)
   - [CreateNode 节点自动创建](#createnode-节点自动创建)
-  - [GameObjectService 游戏对象注册](#gameobjectservice-游戏对象注册)
-  - [Component 普通类对象](#component-普通类对象)
+  - [NodeService 游戏对象注册](#NodeService-游戏对象注册)
+  - [Service 普通类对象](#Service-普通类对象)
   - [依赖注入](#依赖注入)
   - [Node 的命名](#node的命名)
   - [跨场景持久化](#跨场景持久化)
@@ -45,13 +45,13 @@ Godot Easy Inject 是一个为 Godot 游戏引擎开发的依赖注入插件，�
 这种方式在大型项目中会导致代码耦合度高、路径变更容易出错，且测试困难。
 而使用 Godot Easy Inject，你只需添加几个特性标记，就能实现自动依赖注入：
 
-    [GameObjectService]
+    [NodeService]
     public class Player : Node3D
     {
-        [Autowired]
+        [Inject]
         private InventorySystem inventory;
 
-        [Autowired]
+        [Inject]
         private GameStateManager gameState;
 
         public override void _Ready()
@@ -102,15 +102,15 @@ Godot Easy Inject 是一个为 Godot 游戏引擎开发的依赖注入插件，�
         }
     }
 
-### GameObjectService 游戏对象注册
+### NodeService 游戏对象注册
 
-`GameObjectService `特性用于将场景中已存在的节点注册为 Node。
+`NodeService `特性用于将场景中已存在的节点注册为 Node。
 
     // 将节点注册为Node
-    [GameObjectService]
+    [NodeService]
     public class Player : CharacterBody3D
     {
-        [Autowired]
+        [Inject]
         private GameManager gameManager;
 
         public override void _Ready()
@@ -119,12 +119,12 @@ Godot Easy Inject 是一个为 Godot 游戏引擎开发的依赖注入插件，�
         }
     }
 
-### Component 普通类对象
+### Service 普通类对象
 
-`Component` 特性用于注册普通 C# 类（非 `Node`）服务。
+`Service` 特性用于注册普通 C# 类（非 `Node`）服务。
 
     // 注册普通类为Node
-    [Component]
+    [Service]
     public class GameManager
     {
         public void StartGame()
@@ -134,7 +134,7 @@ Godot Easy Inject 是一个为 Godot 游戏引擎开发的依赖注入插件，�
     }
 
     // 使用自定义名称
-    [Component("MainScoreService")]
+    [Service("MainScoreService")]
     public class ScoreService
     {
         public int Score { get; private set; }
@@ -148,22 +148,22 @@ Godot Easy Inject 是一个为 Godot 游戏引擎开发的依赖注入插件，�
 
 ### 依赖注入
 
-`Autowired` 特性用于标记需要注入的依赖。
+`Inject` 特性用于标记需要注入的依赖。
 
     // 服务注入
-    [GameObjectService]
+    [NodeService]
     public class UIController : Control
     {
         // 字段注入
-        [Autowired]
+        [Inject]
         private GameManager gameManager;
 
         // 属性注入
-        [Autowired]
+        [Inject]
         public ScoreService ScoreService { get; set; }
 
         // 带名称的注入
-        [Autowired("MainScoreService")]
+        [Inject("MainScoreService")]
         private ScoreService mainScoreService;
 
         public override void _Ready()
@@ -174,14 +174,14 @@ Godot Easy Inject 是一个为 Godot 游戏引擎开发的依赖注入插件，�
     }
 
     // 构造函数注入 (仅适用于普通类，不适用于Node)
-    [Component]
+    [Service]
     public class GameLogic
     {
         private readonly GameManager gameManager;
         private readonly ScoreService scoreService;
 
         // 构造函数注入
-        public GameLogic(GameManager gameManager, [Autowired("MainScoreService")] ScoreService scoreService)
+        public GameLogic(GameManager gameManager, [Inject("MainScoreService")] ScoreService scoreService)
         {
             this.gameManager = gameManager;
             this.scoreService = scoreService;
@@ -199,19 +199,19 @@ Godot Easy Inject 是一个为 Godot 游戏引擎开发的依赖注入插件，�
 Node 可以通过多种方式命名：
 
     // 默认使用类名
-    [GameObjectService]
+    [NodeService]
     public class Player : Node3D { }
 
     // 自定义名称
-    [GameObjectService("MainPlayer")]
+    [NodeService("MainPlayer")]
     public class Player : Node3D { }
 
     // 使用节点名称
-    [GameObjectService(ENameType.GameObjectName)]
+    [NodeService(ENameType.GameObjectName)]
     public class Enemy : Node3D { }
 
     // 使用字段值
-    [GameObjectService(ENameType.FieldValue)]
+    [NodeService(ENameType.FieldValue)]
     public class ItemSpawner : Node3D
     {
         [NodeName]
@@ -231,7 +231,7 @@ Node 可以通过多种方式命名：
 
     // 持久化的游戏管理器
     [PersistAcrossScenes]
-    [Component]
+    [Service]
     public class GameProgress
     {
         public int Level { get; set; }
@@ -240,7 +240,7 @@ Node 可以通过多种方式命名：
 
     // 持久化的音频管理器
     [PersistAcrossScenes]
-    [GameObjectService]
+    [NodeService]
     public class AudioManager : Node
     {
         public override void _Ready()
@@ -273,9 +273,9 @@ Node 可以通过多种方式命名：
     ioc.DeleteNodeNode<Enemy>(enemy, "Boss", true);
 
     // 清空Node
-    ioc.ClearNodes(); // 清空当前场景的Node
-    ioc.ClearNodes("MainLevel"); // 清空指定场景的Node
-    ioc.ClearNodes(true); // 清空所有Node，包括持久化Node
+    ioc.ClearNodesService(); // 清空当前场景的Node
+    ioc.ClearNodesService("MainLevel"); // 清空指定场景的Node
+    ioc.ClearAllNodesService(true); // 清空所有Node，包括持久化Node
 
 ## 基于里氏替换原则的继承与接口
 
@@ -288,7 +288,7 @@ Node 可以通过多种方式命名：
     }
 
     // 实现接口的Node
-    [GameObjectService("Sword")]
+    [NodeService("Sword")]
     public class Sword : Node3D, IWeapon
     {
         public void Attack()
@@ -298,7 +298,7 @@ Node 可以通过多种方式命名：
     }
 
     // 另一个实现
-    [GameObjectService("Bow")]
+    [NodeService("Bow")]
     public class Bow : Node3D, IWeapon
     {
         public void Attack()
@@ -308,13 +308,13 @@ Node 可以通过多种方式命名：
     }
 
     // 通过接口注入
-    [GameObjectService]
+    [NodeService]
     public class Player : CharacterBody3D
     {
-        [Autowired("Sword")]
+        [Inject("Sword")]
         private IWeapon meleeWeapon;
 
-        [Autowired("Bow")]
+        [Inject("Bow")]
         private IWeapon rangedWeapon;
 
         public void AttackWithMelee()

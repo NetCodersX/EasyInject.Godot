@@ -9,7 +9,7 @@ namespace EasyInject.Services
 	/// <summary>
 	///  IoC容器
 	/// </summary>
-	public interface IIoC
+	public interface INodeContainer
 	{
 		/// <summary>
 		/// 创建一个Node作为服务注入
@@ -62,7 +62,7 @@ namespace EasyInject.Services
 		/// <param name="t">延迟时间（秒）</param>
 		/// <typeparam name="T">node类型</typeparam>
 		/// <returns>是否删除成功</returns>
-		bool DeleteNode<T>(T node, string nodeName = "", bool deleteNode = false, float t = 0.0f) where T : Node;
+		bool DeleteNodeService<T>(T node, string nodeName = "", bool deleteNode = false, float t = 0.0f) where T : Node;
 
 		/// <summary>
 		/// 立即删除一个Node并注销服务
@@ -72,32 +72,32 @@ namespace EasyInject.Services
 		/// <param name="deleteNode">是否删除节点</param>
 		/// <typeparam name="T">node类型</typeparam>
 		/// <returns>是否删除成功</returns>
-		bool DeleteNodeImmediate<T>(T node, string nodeName = "", bool deleteNode = false) where T : Node;
+		bool DeleteNodeImmediateService<T>(T node, string nodeName = "", bool deleteNode = false) where T : Node;
 
 		/// <summary>
-		/// 获取一个node
+		/// 获取Node的服务
 		/// </summary>
 		/// <param name="name">node的名字</param>
 		/// <typeparam name="T">node的类型</typeparam>
 		/// <returns>node实例</returns>
-		T GetNode<T>(string name = "") where T : class;
+		T GetNodeService<T>(string name = "") where T : class;
 
 		/// <summary>
 		/// 获取场景中需要注入的Node实例
 		/// </summary>
-		void Init();
+		void Initialize();
 
 		/// <summary>
-		/// 清空该场景的node
+		/// 清空该场景下的所有Node
 		/// </summary>
 		/// <param name="scene">场景名称</param>
 		/// <param name="clearAcrossScenesnodes">是否清空跨场景的node</param>
-		void ClearNodes(string scene = null, bool clearAcrossScenesnodes = false);
+		void ClearNodesService(string scene = null, bool clearAcrossScenesnodes = false);
 
 		/// <summary>
-		/// 清空该场景的node
+		/// 清空该场景的Node
 		/// </summary>
 		/// <param name="clearAcrossScenesnodes">是否清空跨场景的node</param>
-		void ClearNodes(bool clearAcrossScenesnodes);
+		void ClearAllNodesService(bool clearAcrossScenesnodes);
 	}
 }

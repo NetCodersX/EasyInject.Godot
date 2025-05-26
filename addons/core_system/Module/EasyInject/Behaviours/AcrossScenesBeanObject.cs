@@ -8,7 +8,7 @@ namespace EasyInject.Behaviours
 	/// 自动标记 [PersistAcrossScenes]，并在 _Ready 阶段保证自己不会被场景卸载。
 	/// </summary>
 	[PersistAcrossScenes]
-	public partial class AcrossScenesNodeObject : NodeObject
+	public partial class AcrossScenesNodeObject : InjectableNode
 	{
 		public override void _Ready()
 		{
