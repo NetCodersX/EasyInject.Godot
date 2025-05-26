@@ -90,7 +90,7 @@ Godot Easy Inject 是一个为 Godot 游戏引擎开发的依赖注入插件，�
 
 ### CreateNode 节点自动创建
 
-`CreateNode` 特性允许容器自动创建节点实例并注册到IoC 容器。
+`CreateNode` 特性允许容器自动创建节点实例并注册到IoC容器。
 
     // 自动创建节点并注册为Node
     [CreateNode]
@@ -104,9 +104,9 @@ Godot Easy Inject 是一个为 Godot 游戏引擎开发的依赖注入插件，�
 
 ### NodeService 游戏对象注册
 
-`NodeService `特性用于将场景中已存在的节点注册为 Node。
+`NodeService `特性用于将场景中已存在的节点注册到IoC容器。
 
-    // 将节点注册为Node
+    // 将节点注册为服务
     [NodeService]
     public class Player : CharacterBody3D
     {
@@ -123,7 +123,7 @@ Godot Easy Inject 是一个为 Godot 游戏引擎开发的依赖注入插件，�
 
 `Service` 特性用于注册普通 C# 类（非 `Node`）服务。
 
-    // 注册普通类为Node
+    // 注册普通类为服务
     [Service]
     public class GameManager
     {
