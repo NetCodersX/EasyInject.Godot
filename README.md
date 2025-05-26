@@ -90,7 +90,7 @@ Godot Easy Inject 是一个为 Godot 游戏引擎开发的依赖注入插件，�
 
 ### CreateNode 节点自动创建
 
-`CreateNode` 特性允许容器自动创建节点实例并注册为 Node。
+`CreateNode` 特性允许容器自动创建节点实例并注册到IoC 容器。
 
     // 自动创建节点并注册为Node
     [CreateNode]
