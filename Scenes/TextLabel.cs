@@ -11,3 +11,5 @@ public partial class TextLabel : Label
 		GD.Print("文本值：" + val);
 	}
 }
+
+

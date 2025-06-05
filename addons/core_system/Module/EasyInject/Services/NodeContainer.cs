@@ -825,7 +825,10 @@ namespace EasyInject.Services
 			foreach (var @interface in interfaces)
 			{
 				// 跳过Godot命名空间下的接口
-				if (@interface.Namespace == null || @interface.Namespace.Contains("Godot")) continue;
+				if (@interface.Namespace != null && (@interface.Namespace.Contains("Godot") || @interface.Namespace.Contains("System")))
+				{
+					continue;
+				}
 				RegisterTypeAndParentsAndInterfaces(name, instance, @interface, scene);
 			}
 		}

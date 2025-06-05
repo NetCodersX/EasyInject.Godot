@@ -1,6 +1,6 @@
 ﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyInject.Godot", "EasyInject.Godot.csproj", "{0A232E91-B025-4347-BB93-68665EC9EF25}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyInject.Godot", "EasyInject.Godot.csproj", "{B3AD2454-22F0-4976-A68B-893B6205BD89}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -9,11 +9,11 @@ Global
 	ExportRelease|Any CPU = ExportRelease|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{0A232E91-B025-4347-BB93-68665EC9EF25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0A232E91-B025-4347-BB93-68665EC9EF25}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0A232E91-B025-4347-BB93-68665EC9EF25}.ExportDebug|Any CPU.ActiveCfg = ExportDebug|Any CPU
-		{0A232E91-B025-4347-BB93-68665EC9EF25}.ExportDebug|Any CPU.Build.0 = ExportDebug|Any CPU
-		{0A232E91-B025-4347-BB93-68665EC9EF25}.ExportRelease|Any CPU.ActiveCfg = ExportRelease|Any CPU
-		{0A232E91-B025-4347-BB93-68665EC9EF25}.ExportRelease|Any CPU.Build.0 = ExportRelease|Any CPU
+		{B3AD2454-22F0-4976-A68B-893B6205BD89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3AD2454-22F0-4976-A68B-893B6205BD89}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3AD2454-22F0-4976-A68B-893B6205BD89}.ExportDebug|Any CPU.ActiveCfg = ExportDebug|Any CPU
+		{B3AD2454-22F0-4976-A68B-893B6205BD89}.ExportDebug|Any CPU.Build.0 = ExportDebug|Any CPU
+		{B3AD2454-22F0-4976-A68B-893B6205BD89}.ExportRelease|Any CPU.ActiveCfg = ExportRelease|Any CPU
+		{B3AD2454-22F0-4976-A68B-893B6205BD89}.ExportRelease|Any CPU.Build.0 = ExportRelease|Any CPU
 	EndGlobalSection
 EndGlobal
